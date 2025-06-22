@@ -1,0 +1,122 @@
+version: '3.8'
+services:
+  # 主数据库 (写操作)
+  writer:
+    image: mysql:8.0
+    container_name: mysql-master
+    ports:
+      - "33061:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: testdb
+      MYSQL_REPLICATION_USER: repl_user
+      MYSQL_REPLICATION_PASSWORD: repl_pass
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - ./master/conf:/etc/mysql/conf.d
+      - ./master/init:/docker-entrypoint-initdb.d
+    command:
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog_do_db=testdb
+      --gtid_mode=ON
+      --enforce_gtid_consistency=ON
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p12345" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - micro-net
+
+
+  # 从数据库 (读操作)
+  reader:
+    image: mysql:8.0
+    container_name: mysql-slave
+    ports:
+      - "33062:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: testdb
+    volumes:
+      - ./slave/conf:/etc/mysql/conf.d
+      - ./slave/init:/docker-entrypoint-initdb.d  # 添加初始化脚本
+    command:  # 添加GTID配置命令
+      --server-id=2
+      --gtid_mode=ON
+      --enforce_gtid_consistency=ON
+      --read-only=ON
+      --relay-log=mysql-relay-bin
+      --log-slave-updates=ON
+    networks:
+      - micro-net
+
+  # Redis缓存
+  cache:
+    image: redis:6
+    ports:
+      - "6379:6379"
+    networks:
+      - micro-net
+  oap:
+    image: apache/skywalking-oap-server:9.7.0
+    container_name: skywalking-oap
+    ports:
+      - "11800:11800"  # Agent gRPC 上报端口
+      - "12800:12800"  # UI 查询端口
+    environment:
+      SW_STORAGE: h2   # 使用 H2 存储
+      SW_H2_DRIVER: org.h2.jdbcx.JdbcDataSource
+      SW_H2_URL: jdbc:h2:mem:skywalking-oap-db
+      SW_H2_USER: sa
+      SW_H2_PASSWORD: ""
+      JAVA_OPTS: "-Xms512m -Xmx512m"  # 减少内存占用
+    networks:
+      - micro-net
+
+  ui:
+    image: apache/skywalking-ui:9.7.0
+    container_name: skywalking-ui
+    ports:
+      - "8080:8080"    # Web 访问端口
+    environment:
+      SW_OAP_ADDRESS: http://oap:12800
+      SW_OAP_REST_RETRY_TIMEOUT: 300
+    depends_on:
+      oap:
+        condition: service_healthy
+    networks:
+      - micro-net
+
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: nacos-server
+    ports:
+      - "8848:8848"   # 控制台端口
+      - "9848:9848"   # gRPC 端口
+      - "9849:9849"   # gRPC 端口
+    environment:
+      MODE: standalone        # 单机模式
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: writer  # 使用主库作为存储
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: 12345
+      MYSQL_SERVICE_DB_NAME: nacos_config  # 必须与初始化库名一致
+      # 增加连接参数
+      MYSQL_SERVICE_DB_PARAM: "characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true"
+    depends_on:
+      writer:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8848/nacos/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - micro-net
+
+networks:
+  micro-net:
+    driver: bridge

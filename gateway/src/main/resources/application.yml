@@ -1,0 +1,40 @@
+server:
+  port: 8431
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        register-enabled: true
+        ephemeral: true
+
+    gateway:
+      routes:
+        - id: test-route
+          uri: forward:/test/endpoint
+          predicates:
+            - Path=/test,/test/**
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
+            - name: CircuitBreaker
+              args:
+                name: useFallback
+                fallbackUri: forward:/fallback/user
+
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/admin/**
+          filters:
+            - StripPrefix=1
+      discovery:
+        locator:
+          enabled: false  # ??????
+          lower-case-service-id: true
