@@ -1,1 +1,48 @@
-spring.application.name=user
+server:
+  port: 8342
+  
+  
+spring:
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "org.rookie.entity.database"
+      acks: 1
+      retries: 3
+    consumer:
+      group-id: sync-cache
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      enable-auto-commit: false
+    
+  application:
+      name: user-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        register-enabled: true
+        ephemeral: true
+  
+  
+mybatis-flex:
+  datasource:
+    reader:
+      type: druid
+      url: jdbc:mysql://localhost:33062/testdb
+      username: root
+      password: 12345
+      asyncInt: true
+    writer:
+      type: druid
+      url: jdbc:mysql://localhost:33061/testdb
+      username: root
+      password: 12345
+      asyncInt: true

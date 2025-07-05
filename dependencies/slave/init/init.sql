@@ -1,5 +1,5 @@
 -- 等待主库准备就绪
-SELECT SLEEP(15);
+SELECT SLEEP(30);
 
 -- 配置复制链路
 CHANGE MASTER TO

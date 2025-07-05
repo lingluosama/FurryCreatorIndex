@@ -1,1 +1,29 @@
-spring.application.name=admin
+server:
+  port: 8343
+  
+  
+spring:
+  application:
+      name: admin-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        register-enabled: true
+        ephemeral: true
+  
+  
+mybatis-flex:
+  datasource:
+    reader:
+      type: druid
+      url: jdbc:mysql://localhost:33062
+      username: root
+      password: 12345
+      asyncInt: true
+    writer:
+      type: druid
+      url: jdbc:mysql://localhost:33061
+      username: root
+      password: 12345
+      asyncInt: true

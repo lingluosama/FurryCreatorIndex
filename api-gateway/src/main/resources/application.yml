@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        register-enabled: true
+        ephemeral: true
+
+    gateway:
+      routes:
+        - id: user-service-router
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userFallback
+                fallbackUri: forward:/fallback/user
+        - id: admin_service-router
+          uri: lb://admin-server
+          predicates:
+            - Path=/file/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: adminFallback
+                fallbackUri: forward:/fallback/admin
+server:
+  port: 8341

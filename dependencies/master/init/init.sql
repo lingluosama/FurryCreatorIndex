@@ -13,3 +13,14 @@ GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
 FLUSH PRIVILEGES;
 
 USE testdb;
+
+
+create table user
+(
+    id       bigint not null,
+    name     text   null,
+    password text   null,
+    slat     text   null,
+    avatar   text   null,
+    email    text   null
+);
