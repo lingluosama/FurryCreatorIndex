@@ -1,4 +1,4 @@
-package org.rookie.entity.database;
+package org.rookie.model.entity.database;
 
 
 

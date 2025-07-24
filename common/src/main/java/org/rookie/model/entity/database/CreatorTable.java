@@ -1,4 +1,4 @@
-package org.rookie.entity.database;
+package org.rookie.model.entity.database;
 
 
 import com.mybatisflex.annotation.Id;import com.mybatisflex.annotation.KeyType;import com.mybatisflex.annotation.Table;import com.mybatisflex.core.keygen.KeyGenerators;import lombok.Data;import org.rookie.consts.CreatorType;

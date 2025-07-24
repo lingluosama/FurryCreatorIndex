@@ -4,7 +4,7 @@ package org.rookie.user.service;
 import com.mybatisflex.core.service.IService;
 import org.rookie.annotation.CacheDbSync;
 import org.rookie.annotation.RedisCache;
-import org.rookie.entity.database.UserTable;
+import org.rookie.model.entity.database.UserTable;
 
 import java.util.List;
 

@@ -5,7 +5,7 @@ import org.rookie.annotation.CacheDbSync;
 import org.rookie.annotation.RedisCache;
 import org.rookie.config.BusinessException;
 import org.rookie.config.BusinessExceptionEnum;
-import org.rookie.entity.database.UserTable;
+import org.rookie.model.entity.database.UserTable;
 import org.rookie.entity.database.table.UserTableTableDef;
 import org.rookie.user.mapper.UserMapper;
 import org.rookie.user.service.IUserService;

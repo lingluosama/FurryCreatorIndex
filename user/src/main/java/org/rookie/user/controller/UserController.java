@@ -1,12 +1,9 @@
 package org.rookie.user.controller;
 
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Null;
-import org.rookie.entity.database.UserTable;
+import org.rookie.model.entity.database.UserTable;
 import org.rookie.user.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

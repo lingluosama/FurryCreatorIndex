@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+/*
+ * Material Design 3 (M3) 颜色系统基于“色调调色板”（Tonal Palettes）。
+ * 每个核心颜色（Primary, Secondary, Tertiary, Error, Neutral）都有从 0 到 100 的色调（Tone），
+ * 其中 0 是最暗，100 是最亮。
+ *
+ * 这些 CSS 变量是 M3 的“语义化颜色令牌”，它们将特定的色调映射到 UI 元素上。
+ * 这种方法使得主题切换和颜色管理更加灵活和可预测。
+ */
+
+/*
+ * 浅色主题 (Light Theme)
+ * 这些变量定义了应用在默认（浅色）模式下的颜色。
+ * 当 HTML 根元素没有 'dark' 类时，这些颜色生效。
+ */
+:root {
+  /* 主要颜色 (Primary) - 选择了更具活力和亲和力的蓝色/紫色调 */
+  --color-primary: oklch(55% 0.18 250); /* 主要交互元素、按钮等的主色 */
+  --color-on-primzary: oklch(100% 0 0); /* 在主要颜色上的文本/图标颜色 (白色) */
+  --color-primary-container: oklch(90% 0.08 250); /* 主要颜色的容器背景色 (非常浅的蓝色) */
+  --color-on-primary-container: oklch(30% 0.15 250); /* 在主要容器上的文本/图标颜色 (较深的蓝色) */
+
+  /* 辅助颜色 (Secondary) - 选择了清新的绿色调，与主色形成活力对比 */
+  --color-secondary: oklch(60% 0.15 150); /* 辅助交互元素、次要按钮等 */
+  --color-on-secondary: oklch(100% 0 0); /* 在辅助颜色上的文本/图标颜色 (白色) */
+  --color-secondary-container: oklch(90% 0.06 150); /* 辅助颜色的容器背景色 (非常浅的绿色) */
+  --color-on-secondary-container: oklch(35% 0.12 150); /* 在辅助容器上的文本/图标颜色 (较深的绿色) */
+
+  /* 第三颜色 (Tertiary) - 选择了温暖的橙色/黄色调，增加趣味性和区分度 */
+  --color-tertiary: oklch(70% 0.2 60); /* 强调或补充色，用于区分主要和辅助颜色 */
+  --color-on-tertiary: oklch(20% 0 0); /* 在第三颜色上的文本/图标颜色 (深色) */
+  --color-tertiary-container: oklch(95% 0.08 60); /* 第三颜色的容器背景色 (非常浅的橙色/黄色) */
+  --color-on-tertiary-container: oklch(40% 0.15 60); /* 在第三容器上的文本/图标颜色 (较深的橙色/黄色) */
+
+  /* 错误颜色 (Error) - 保持红色，但略微调整以融入整体饱和度 */
+  --color-error: oklch(60% 0.18 25); /* 错误状态的颜色 */
+  --color-on-error: oklch(100% 0 0); /* 在错误颜色上的文本/图标颜色 (白色) */
+  --color-error-container: oklch(90% 0.08 25); /* 错误容器的背景色 (非常浅的红色) */
+  --color-on-error-container: oklch(30% 0.15 25); /* 在错误容器上的文本/图标颜色 (较深的红色) */
+
+  /* 背景和表面颜色 (Background & Surface) - 保持中性，但略带暖意，以配合整体活泼感 */
+  --color-background: oklch(98% 0.005 80); /* 应用的整体背景色 (非常浅的暖灰色) */
+  --color-on-background: oklch(15% 0.005 80); /* 在背景色上的文本/图标颜色 (深暖灰色) */
+  --color-surface: oklch(98% 0.005 80); /* 组件的背景色，如卡片、菜单 (与背景色接近) */
+  
+  --color-on-surface: oklch(15% 0.005 80); /* 在表面色上的文本/图标颜色 */
+  --color-surface-variant: oklch(90% 0.01 80); /* 表面变体色，用于区分或强调表面元素 (稍深的暖灰色) */
+  --color-on-surface-variant: oklch(40% 0.01 80); /* 在表面变体色上的文本/图标颜色 */
+
+  /* 轮廓和阴影 (Outline & Shadow) - 调整以适应新的中性色调 */
+  --color-outline: oklch(70% 0.01 80); /* 元素轮廓的颜色 */
+  --color-outline-variant: oklch(85% 0.005 80); /* 轮廓变体色 */
+  --color-shadow: oklch(0% 0 0); /* 阴影颜色 (黑色) */
+  --color-scrim: oklch(0% 0 0 / 0.8); /* 用于覆盖内容以突出前景元素的颜色 (带透明度) */
+
+  /* 反转颜色 (Inverse Colors) - 用于在主要颜色上显示反色内容，确保对比度 */
+  --color-inverse-surface: oklch(20% 0.005 80); /* 反转表面色 (深色模式下的表面色) */
+  --color-inverse-on-surface: oklch(95% 0.005 80); /* 在反转表面色上的文本/图标颜色 (深色模式下的文本色) */
+  --color-inverse-primary: oklch(80% 0.18 250); /* 反转主要色 (深色模式下的主要色) */
+
+  /* 固定颜色 (Fixed Colors) - 用于特殊情况，如固定在某个色调上的元素，与主色调板保持一致 */
+  --color-primary-fixed: oklch(90% 0.08 250);
+  --color-on-primary-fixed: oklch(10% 0.15 250);
+  --color-primary-fixed-dim: oklch(75% 0.18 250);
+  --color-on-primary-fixed-variant: oklch(30% 0.15 250);
+  --color-secondary-fixed: oklch(90% 0.06 150);
+  --color-on-secondary-fixed: oklch(15% 0.12 150);
+  --color-secondary-fixed-dim: oklch(80% 0.15 150);
+  --color-on-secondary-fixed-variant: oklch(35% 0.12 150);
+  --color-tertiary-fixed: oklch(95% 0.08 60);
+  --color-on-tertiary-fixed: oklch(25% 0.15 60);
+  --color-tertiary-fixed-dim: oklch(85% 0.2 60);
+  --color-on-tertiary-fixed-variant: oklch(40% 0.15 60);
+
+  /* 表面容器颜色 (Surface Containers) - 用于不同层级的表面元素，提供视觉深度，保持暖中性 */
+  --color-surface-dim: oklch(80% 0.01 80); /* 较暗的表面 */
+  --color-surface-bright: oklch(99% 0.005 80); /* 较亮的表面 */
+  --color-surface-container-lowest: oklch(100% 0 0); /* 最低的表面层 (最亮) */
+  --color-surface-container-low: oklch(96% 0.005 80); /* 较低的表面层 */
+  --color-surface-container: oklch(94% 0.005 80); /* 默认表面层 */
+  --color-surface-container-high: oklch(92% 0.005 80); /* 较高的表面层 */
+  --color-surface-container-highest: oklch(90% 0.005 80); /* 最高的表面层 (最暗) */
+}
+
+/*
+ * 深色主题 (Dark Theme)
+ * 当 HTML 根元素具有 'dark' 类时，这些变量会覆盖浅色主题的同名变量。
+ * 深色主题通常使用与浅色主题相反的色调，以确保对比度。
+ */
+.dark {
+  /* 主要颜色 (Primary) - 深色模式下更亮，保持活力 */
+  --color-primary: oklch(80% 0.18 250); /* 主要交互元素、按钮等的主色 (深色模式下更亮) */
+  --color-on-primary: oklch(20% 0.15 250); /* 在主要颜色上的文本/图标颜色 (深色模式下更暗) */
+  --color-primary-container: oklch(30% 0.15 250); /* 主要颜色的容器背景色 (深色模式下更暗) */
+  --color-on-primary-container: oklch(90% 0.08 250); /* 在主要容器上的文本/图标颜色 (深色模式下更亮) */
+
+  /* 辅助颜色 (Secondary) - 深色模式下更亮，保持清新 */
+  --color-secondary: oklch(80% 0.15 150);
+  --color-on-secondary: oklch(20% 0.12 150);
+  --color-secondary-container: oklch(35% 0.12 150);
+  --color-on-secondary-container: oklch(90% 0.06 150);
+
+  /* 第三颜色 (Tertiary) - 深色模式下更亮，保持温暖 */
+  --color-tertiary: oklch(90% 0.2 60);
+  --color-on-tertiary: oklch(10% 0.15 60);
+  --color-tertiary-container: oklch(40% 0.15 60);
+  --color-on-tertiary-container: oklch(95% 0.08 60);
+
+  /* 错误颜色 (Error) - 深色模式下更亮 */
+  --color-error: oklch(80% 0.18 25);
+  --color-on-error: oklch(20% 0.15 25);
+  --color-error-container: oklch(30% 0.15 25);
+  --color-on-error-container: oklch(90% 0.08 25);
+
+  /* 背景和表面颜色 (Background & Surface) - 调整为更深的亮度 */
+  --color-background: oklch(8% 0.005 80); /* 应用的整体背景色 (更深的暖灰色) */
+  --color-on-background: oklch(95% 0.005 80); /* 在背景色上的文本/图标颜色 (浅暖灰色) */
+  --color-surface: oklch(8% 0.005 80); /* 组件的背景色，如卡片、菜单 (与背景色接近) */
+  --color-on-surface: oklch(95% 0.005 80); /* 在表面色上的文本/图标颜色 */
+  --color-surface-variant: oklch(25% 0.01 80); /* 表面变体色 (较深的暖灰色) */
+  --color-on-surface-variant: oklch(85% 0.01 80); /* 在表面变体色上的文本/图标颜色 */
+
+  /* 轮廓和阴影 (Outline & Shadow) - 调整以适应更深的背景 */
+  --color-outline: oklch(40% 0.01 80);
+  --color-outline-variant: oklch(20% 0.005 80);
+  --color-shadow: oklch(0% 0 0);
+  --color-scrim: oklch(0% 0 0 / 0.8);
+
+  /* 反转颜色 (Inverse Colors) */
+  --color-inverse-surface: oklch(95% 0.005 80);
+  --color-inverse-on-surface: oklch(8% 0.005 80);
+  --color-inverse-primary: oklch(55% 0.18 250);
+
+  /* 固定颜色 (Fixed Colors) - 深色模式下的固定颜色，与主色调板保持一致 */
+  --color-primary-fixed: oklch(90% 0.08 250);
+  --color-on-primary-fixed: oklch(10% 0.15 250);
+  --color-primary-fixed-dim: oklch(75% 0.18 250);
+  --color-on-primary-fixed-variant: oklch(30% 0.15 250);
+  --color-secondary-fixed: oklch(90% 0.06 150);
+  --color-on-secondary-fixed: oklch(15% 0.12 150);
+  --color-secondary-fixed-dim: oklch(80% 0.15 150);
+  --color-on-secondary-fixed-variant: oklch(35% 0.12 150);
+  --color-tertiary-fixed: oklch(95% 0.08 60);
+  --color-on-tertiary-fixed: oklch(25% 0.15 60);
+  --color-tertiary-fixed-dim: oklch(85% 0.2 60);
+  --color-on-tertiary-fixed-variant: oklch(40% 0.15 60);
+
+  /* 表面容器颜色 (Surface Containers) - 深色模式下的不同层级表面，提供视觉深度 */
+  --color-surface-dim: oklch(8% 0.005 80);
+  --color-surface-bright: oklch(20% 0.005 80);
+  --color-surface-container-lowest: oklch(3% 0.005 80); /* 最低的表面层 (最暗) */
+  --color-surface-container-low: oklch(10% 0.005 80); /* 较低的表面层 */
+  --color-surface-container: oklch(13% 0.005 80); /* 默认表面层 */
+  --color-surface-container-high: oklch(16% 0.005 80); /* 较高的表面层 */
+  --color-surface-container-highest: oklch(19% 0.005 80); /* 最高的表面层 (最亮，相对于其他深色表面) */
+}
+
+/*
+ * Tailwind CSS 4.0 的 @theme inline 块
+ * 这个块用于告诉 Tailwind CSS 编译器，这些自定义属性是主题的一部分，
+ * 从而让 Tailwind 能够生成对应的工具类（例如 `bg-primary`, `text-on-background` 等）。
+ * 它通过引用 :root 中定义的变量来工作。
+ */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-surface-tint: var(--color-surface-tint);
+  --color-on-primary: var(--color-on-primary);
+  --color-primary-container: var(--color-primary-container);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-secondary: var(--color-secondary);
+  --color-on-secondary: var(--color-on-secondary);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-on-secondary-container: var(--color-on-secondary-container);
+  --color-tertiary: var(--color-tertiary);
+  --color-on-tertiary: var(--color-on-tertiary);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-on-tertiary-container: var(--color-on-tertiary-container);
+  --color-error: var(--color-error);
+  --color-on-error: var(--color-on-error);
+  --color-error-container: var(--color-error-container);
+  --color-on-error-container: var(--color-on-error-container);
+  --color-background: var(--color-background);
+  --color-on-background: var(--color-on-background);
+  --color-surface: var(--color-surface);
+  --color-on-surface: var(--color-on-surface);
+  --color-surface-variant: var(--color-surface-variant);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-shadow: var(--color-shadow);
+  --color-scrim: var(--color-scrim);
+  --color-inverse-surface: var(--color-inverse-surface);
+  --color-inverse-on-surface: var(--color-inverse-on-surface);
+  --color-inverse-primary: var(--color-inverse-primary);
+  --color-primary-fixed: var(--color-primary-fixed);
+  --color-on-primary-fixed: var(--color-on-primary-fixed);
+  --color-primary-fixed-dim: var(--color-primary-fixed-dim);
+  --color-on-primary-fixed-variant: var(--color-on-primary-fixed-variant);
+  --color-secondary-fixed: var(--color-secondary-fixed);
+  --color-on-secondary-fixed: var(--color-on-secondary-fixed);
+  --color-secondary-fixed-dim : var(--color-secondary-fixed-dim);
+  --color-on-secondary-fixed-variant: var(--color-on-secondary-fixed-variant);
+  --color-tertiary-fixed: var(--color-tertiary-fixed);
+  --color-on-tertiary-fixed: var(--color-on-tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--color-tertiary-fixed-dim);
+  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
+  --color-surface-dim: var(--color-surface-dim);
+  --color-surface-bright: var(--color-surface-bright);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+}
+
+/*
+ * 应用到 body 元素的默认样式
+ * 这些样式会使用上面定义的语义化颜色令牌。
+ */
+body {
+  background: var(--color-background);
+  color: var(--color-on-background);
+  font-family: Arial, Helvetica, sans-serif;
+}

@@ -1,4 +1,4 @@
-package org.rookie.entity.database.table;
+package org.rookie.model.entity.database.table;
 
 import com.mybatisflex.core.query.QueryColumn;
 import com.mybatisflex.core.table.TableDef;
