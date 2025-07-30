@@ -17,7 +17,7 @@ export default function  LanguageSelectButton({w,h}:LanguageSelectButtonProps){
     return(
         <div className={`bg-primary-container w-${w} min-h-${h} text-on-primary-container
             transition-all duration-300 hover:bg-primary
-            flex flex-col rounded-2xl
+            flex flex-col rounded-2xl pl-2 pr-2
         `}
             onMouseEnter={()=>setIsHover(true)}
              onMouseLeave={()=>setIsHover(false)}

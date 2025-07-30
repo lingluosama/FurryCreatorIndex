@@ -13,5 +13,7 @@ export const zhTranslations: Translations = {
         to_register: "没有账户？去注册",
         email: "邮箱",
         name: "名称",
+        password:"密码",
+        verify_email:"验证"
     }
 };

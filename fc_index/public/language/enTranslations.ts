@@ -12,5 +12,7 @@ export const enTranslations: Translations = {
         to_register: "Don't have an account? Register",
         email: "Email",
         name: "Name",
+        password:"Password",
+        verify_email:"Verify"
     }
 };

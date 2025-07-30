@@ -23,19 +23,22 @@ const animations:{[key:string]:AnimationDefinition}={
 }
 
 interface AnimatedContainerProps{
+    key?:string
     direction:'up'|'down',
     children:ReactNode,
     className?:string,
 }
 
 export function AnimatedContainer({
+    key="null",
     direction,
     children,
     className,
                                   }:AnimatedContainerProps){
     const animation=direction==="down"?animations.fadeInUp:animations.fadeInRight
     return(
-        <motion.div
+        <motion.div 
+            key={key}
             //初始状态
             initial={animation.initial}
             //目标状态

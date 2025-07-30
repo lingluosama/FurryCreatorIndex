@@ -9,4 +9,6 @@ export interface AuthPage{
     to_register:string
     email:string
     name:string
+    password:string
+    verify_email:string
 }
