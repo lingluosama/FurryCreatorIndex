@@ -14,6 +14,7 @@ export const zhTranslations: Translations = {
         email: "邮箱",
         name: "名称",
         password:"密码",
-        verify_email:"验证"
+        verify_email:"验证",
+        verify_code:"验证码"
     }
 };

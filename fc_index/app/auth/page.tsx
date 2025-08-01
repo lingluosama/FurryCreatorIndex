@@ -21,6 +21,7 @@ export default function Page() {
     const [password, setPassword] = useState("");
     const [emailVerifyInterval, setEmailVerifyInterval] = useState(0);
     const [name, setName] = useState("");
+    const [verifyCode, setVerifyCode] = useState("")
 
     // 验证邮箱
     function verifyEmail() {
@@ -63,7 +64,7 @@ export default function Page() {
             </div>
 
             {/* 动态欢迎词 - 居中且宽度适中 */}
-            <div className={`w-full max-w-3xl text-center mb-8 px-4`}> {/* 增加 max-w 和 px 确保内边距 */}
+            <div className={`w-full max-w-5xl text-center mb-8 px-4`}> 
                 <div className={`p-3`}>
                     <AnimatedText
                         className={`text-on-surface text-4xl md:text-5xl lg:text-6xl font-extrabold flex flex-wrap justify-center leading-tight`} /* 调整字号，移除 break-before-avoid，增加 leading-tight */
@@ -86,7 +87,7 @@ export default function Page() {
 
             {/* 登录和注册表单 - 使用 key 强制动画重置 */}
             <AnimatedContainer
-                key={isLogin ? "login" : "register"}
+                key={isLogin ? "login" : `register`}
                 direction={"down"}
                 className={`w-full max-w-md p-8
                 flex flex-col items-center
@@ -132,6 +133,13 @@ export default function Page() {
                                 </Button>
                             }
                             onChange={(s) => setEmail(s)}
+                            onEnter={() => { /* 注册逻辑 */ }}
+                        />
+                        <CustomerInPut
+                            className={`w-full`}
+                            label={languageContext.t("authPage", "verify_code")}
+                            value={verifyCode}
+                            onChange={(s) => setVerifyCode(s)}
                             onEnter={() => { /* 注册逻辑 */ }}
                         />
                         <CustomerInPut

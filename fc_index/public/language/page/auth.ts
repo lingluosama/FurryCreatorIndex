@@ -11,4 +11,5 @@ export interface AuthPage{
     name:string
     password:string
     verify_email:string
+    verify_code:string
 }

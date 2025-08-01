@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>user</module>
-        <module>admin</module>
+        <module>business</module>
+        <module>data</module>
         <module>common</module>
     </modules>
     
@@ -80,13 +80,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-                    <!-- Druid 连接池 -->
-            <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
-                    <dependency>
-                        <groupId>com.alibaba</groupId>
-                        <artifactId>druid</artifactId>
-                        <version>1.2.24</version>
-                    </dependency>
+            <!-- Druid 连接池 -->
+    <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.2.24</version>
+            </dependency>
+<!--        openfeign服务调用-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
         
     </dependencies>
     <dependencyManagement>

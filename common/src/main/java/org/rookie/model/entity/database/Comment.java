@@ -1,0 +1,34 @@
+package org.rookie.model.entity.database;
+
+import com.mybatisflex.annotation.Column;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
+import lombok.Data; // 引入 Lombok 的 Data 注解
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Data // 自动生成 Getter, Setter, equals, hashCode, toString
+@Table("comment")
+public class Comment implements Serializable {
+
+    @Id(keyType = KeyType.Auto)
+    private Long id;
+
+    private Long entityId;
+
+    private String entityType; // 例如 WIKI_ENTRY, GAME
+
+    private Long userId;
+
+    private Long parentId;
+
+    private String content;
+
+    private String status; // 例如 APPROVED, PENDING, SPAM
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+}

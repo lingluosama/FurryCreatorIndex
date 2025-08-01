@@ -54,7 +54,7 @@ services:
 
   # Redis缓存
   cache:
-    image: redis:6
+    image: redis
     ports:
       - "6379:6379"
     networks:

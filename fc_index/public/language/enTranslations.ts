@@ -13,6 +13,7 @@ export const enTranslations: Translations = {
         email: "Email",
         name: "Name",
         password:"Password",
-        verify_email:"Verify"
+        verify_email:"Verify",
+        verify_code:"captcha"
     }
 };
