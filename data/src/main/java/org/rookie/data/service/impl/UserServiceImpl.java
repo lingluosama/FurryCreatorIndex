@@ -3,10 +3,12 @@ package org.rookie.data.service.impl;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.rookie.annotation.CacheDbSync;
 import org.rookie.annotation.RedisCache;
-import org.rookie.config.BusinessException;
-import org.rookie.config.BusinessExceptionEnum;
+import org.rookie.data.model.form.UserRegisterForm;
+import org.rookie.exception.BusinessException;
+import org.rookie.exception.BusinessExceptionEnum;
 import org.rookie.data.mapper.UserMapper;
 import org.rookie.data.service.IUserService;
+import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.entity.database.User;
 import org.rookie.model.entity.database.table.UserTableDef;
 import org.springframework.http.HttpStatus;
@@ -37,7 +39,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     @CacheDbSync
-    public User saveUser(User user) {
+    public AuthDTO saveUser(UserRegisterForm form) {
+        User user = new User();
+        
+        
         boolean exists = queryChain().where(UserTableDef.USER.USERNAME.eq(user.getUsername())).exists();
         if(exists){
             throw new BusinessException(HttpStatus.BAD_REQUEST.value(),"用户名已存在"); 

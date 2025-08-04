@@ -4,6 +4,8 @@ package org.rookie.data.service;
 import com.mybatisflex.core.service.IService;
 import org.rookie.annotation.CacheDbSync;
 import org.rookie.annotation.RedisCache;
+import org.rookie.data.model.form.UserRegisterForm;
+import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.entity.database.User;
 
 import java.util.List;
@@ -16,7 +18,7 @@ public interface IUserService extends IService<User>{
     User queryByid(Long id);
 
     @CacheDbSync
-    User saveUser(User user);
+    AuthDTO saveUser(UserRegisterForm form);
     @CacheDbSync
     User updateUser(User user);
     

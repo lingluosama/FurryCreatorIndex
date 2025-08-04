@@ -12,7 +12,6 @@ public interface UserFeignClient {
     AuthDTO register(
         String userName,
         String password,
-        String captcha,
         String email,
         String nickName,
         String phoneNumber,

@@ -1,6 +1,6 @@
 package org.rookie.utils;
 
-import org.rookie.config.BusinessExceptionEnum;
+import org.rookie.exception.BusinessExceptionEnum;
 
 import java.lang.reflect.Field;
 

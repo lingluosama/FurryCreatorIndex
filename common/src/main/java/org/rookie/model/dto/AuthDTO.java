@@ -11,5 +11,4 @@ public class AuthDTO {
     Long id;
     String userName;
     String role;
-    String avatar_url;
 }

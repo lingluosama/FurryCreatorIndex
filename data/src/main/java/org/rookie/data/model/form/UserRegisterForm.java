@@ -1,4 +1,5 @@
-package org.rookie.model.form;
+package org.rookie.data.model.form;
+
 
 import lombok.Data;
 
@@ -6,7 +7,6 @@ import lombok.Data;
 public class UserRegisterForm {
     String userName;
     String password;
-    String captcha;
     String email;
     String nickName;
     String phoneNumber;

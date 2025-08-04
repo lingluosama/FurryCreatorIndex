@@ -1,7 +1,5 @@
-package org.rookie.config;
+package org.rookie.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
