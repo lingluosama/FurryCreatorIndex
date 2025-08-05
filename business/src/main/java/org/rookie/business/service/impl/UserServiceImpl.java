@@ -1,30 +1,27 @@
 package org.rookie.business.service.impl;
 
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.rookie.business.feign.UserFeignClient;
-import org.rookie.business.model.form.UserRegisterForm;
 import org.rookie.business.service.UserService;
+import org.rookie.consts.Result;
 import org.rookie.model.dto.AuthDTO;
+import org.rookie.model.form.UserRegisterForm;
 import org.springframework.stereotype.Service;
 
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     
     private final UserFeignClient userFeignClient;
 
     @Override
     public AuthDTO userRegister(UserRegisterForm form) {
-        AuthDTO dto = userFeignClient.register(
-                form.getUserName(),
-                form.getPassword(),
-                form.getEmail(),
-                form.getNickName(),
-                form.getPhoneNumber(),
-                form.getIp()
+        Result<AuthDTO> dtoResult = userFeignClient.register(
+                form
         );
-        return dto;
+        return dtoResult.getData();
+        
     }
 }

@@ -3,7 +3,7 @@ package org.rookie.data.converter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.rookie.data.model.form.UserRegisterForm;
+import org.rookie.model.form.UserRegisterForm;
 import org.rookie.model.entity.database.User;
 
 @Mapper(componentModel = "spring") // componentModel="spring" 让 MapStruct 生成的类作为 Spring Bean

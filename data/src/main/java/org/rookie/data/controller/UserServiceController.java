@@ -2,11 +2,11 @@ package org.rookie.data.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.rookie.consts.Result;
-import org.rookie.data.model.form.UserRegisterForm;
+import org.rookie.model.form.UserRegisterForm;
 import org.rookie.data.service.IUserService;
-import org.rookie.model.entity.database.User;
+import org.rookie.exception.BusinessException;
+import org.rookie.model.dto.AuthDTO;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,12 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/data/user")
 @RequiredArgsConstructor
 public class UserServiceController {
-    private IUserService userService;
+    private final IUserService userService;   
     
     @PostMapping("/register")
-    Result<Boolean> registerUser(UserRegisterForm form) {
+    Result<AuthDTO> registerUser(UserRegisterForm form) {
         try {
-            User user = userService.saveUser(form);
+            AuthDTO dto = userService.saveUser(form);
+            return Result.success(dto);
+        }catch (BusinessException e) {
+            return Result.failed(e.getMessage());
+        }catch (Exception e) {
+            throw e;
         }
     }
     

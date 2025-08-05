@@ -1,6 +1,7 @@
 package org.rookie.business.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.rookie.consts.Result;
 import org.rookie.exception.BusinessException;
 import org.rookie.config.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -13,19 +14,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     
     @ExceptionHandler(value = BusinessException.class)
-    public ResponseEntity<ErrorResponse>handleBusinessException(BusinessException e) {
+    public Result<String>handleBusinessException(BusinessException e) {
         log.warn("用户服务业务内异常: code={} msg={}", e.getCode(), e.getMessage());
-
-        ErrorResponse error = new ErrorResponse(e.getCode(), e.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return Result.failed(HttpStatus.BAD_REQUEST,e.getMessage());
         
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleSystemException(Exception e) {
+    public Result<String> handleSystemException(Exception e) {
         log.error("用户服务怎么鼠了: ", e);
-        ErrorResponse error = new ErrorResponse(500, "系统繁忙");
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        return Result.failed(HttpStatus.INTERNAL_SERVER_ERROR,"系统繁忙，请稍后重试");
+    }
+    
+    @ExceptionHandler(DownstreamServiceException.class)
+    public Result<String> handleDownstreamServiceException(DownstreamServiceException e) {
+        log.warn("下游服务异常已被全局处理并返回");    
+        return Result.failed(HttpStatus.BAD_REQUEST,e.getMessage());
     }
     
 }

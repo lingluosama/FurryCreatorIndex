@@ -1,7 +1,6 @@
 server:
   port: 8342
   
-  
 spring:
   kafka:
     bootstrap-servers: localhost:9094
@@ -46,3 +45,5 @@ mybatis-flex:
       username: root
       password: 12345
       asyncInt: true
+
+  

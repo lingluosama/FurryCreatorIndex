@@ -4,7 +4,7 @@ package org.rookie.data.service;
 import com.mybatisflex.core.service.IService;
 import org.rookie.annotation.CacheDbSync;
 import org.rookie.annotation.RedisCache;
-import org.rookie.data.model.form.UserRegisterForm;
+import org.rookie.model.form.UserRegisterForm;
 import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.entity.database.User;
 
