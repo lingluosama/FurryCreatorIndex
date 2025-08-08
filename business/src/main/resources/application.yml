@@ -45,5 +45,13 @@ mybatis-flex:
       username: root
       password: 12345
       asyncInt: true
-
+sa-token:
+  token-name: fc-token
+  timeout: 86400           # Token 有效期，单位秒 (默认30天，这里设为1天)
+  active-timeout: -1       # Token 最低活跃度，单位秒 (默认-1，表示永不失效，只有到期才失效)
+  is-concurrent: false      # 是否允许同一账号多端同时登录 (如果为false，后面登录会踢掉前面登录的)
+  is-share-same-token: false # 是否在多端登录时共享同一 Token (通常与is-concurrent配合)
+  is-read-body: true       # 是否从请求体获取 Token
+  is-read-header: true     # 是否从请求头获取 Token
+  is-read-cookie: true    #从cookie进行无感鉴权
   

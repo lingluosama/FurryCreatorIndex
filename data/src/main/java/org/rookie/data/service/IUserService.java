@@ -11,14 +11,20 @@ import org.rookie.model.entity.database.User;
 import java.util.List;
 
 public interface IUserService extends IService<User>{
+
+    @CacheDbSync
+    AuthDTO userRegister(UserRegisterForm form);
+    
+    
+    AuthDTO userLogin(String username, String password); 
+    
     
     List<User> SearchUser(String keyword, Integer offset, Integer limit);
 
     @RedisCache(key = "UserTable:%s",expire = 168)
     User queryByid(Long id);
 
-    @CacheDbSync
-    AuthDTO saveUser(UserRegisterForm form);
+
     @CacheDbSync
     User updateUser(User user);
     

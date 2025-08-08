@@ -3,6 +3,7 @@ package org.rookie.data.config;
 import com.mybatisflex.core.datasource.DataSourceManager;
 import lombok.Data;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.rookie.config.RWSeparationStrategy;
 import org.rookie.config.RandomReadDataSourceStrategy;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Data
+@RequiredArgsConstructor
 public class CircuitBreakerStateManager {
     
     private static final Logger log = LoggerFactory.getLogger(CircuitBreakerStateManager.class.getName());
@@ -50,7 +52,7 @@ public class CircuitBreakerStateManager {
 
     public void updateLevel(BreakerState newLevel) {
         level.set(newLevel.getCode());
-        System.out.println("熔断器状态更新为: " + newLevel);
+        log.warn("熔断器状态更新为: {}", newLevel);
     }
 
     public void resetThresholds() {
@@ -63,8 +65,7 @@ public class CircuitBreakerStateManager {
     
     
     
-    @Autowired
-    RedisTemplate<String,Object> redisTemplate;
+    private final RedisTemplate<String,Object> redisTemplate;
 
     public static String NOT_HIT_REDIS_COUNT_KEY = "cache:query_not_hit_count";
     public static long NOT_HIT_VALUE_EXPIRE_MINUTES = 2;
@@ -89,17 +90,20 @@ public class CircuitBreakerStateManager {
                 return;
             }
             Object value = redisTemplate.opsForValue().get(NOT_HIT_REDIS_COUNT_KEY);
-            if(value instanceof Long|| value instanceof Integer){
-                log.warn("正在执行定时穿透数量检查,周期内缓存未命中:{}",value);
-                if((Long)value>=this.getRandReadLevelThreshold()){
+            if(value instanceof Number){
+
+                Long currentCount = ((Number) value).longValue();
+                
+                log.warn("正在执行定时穿透数量检查,周期内缓存未命中:{}",currentCount);
+                if(currentCount>=this.getRandReadLevelThreshold()){
                     this.updateLevel(BreakerState.RANDOM_READ);
                     DataSourceManager.setDataSourceShardingStrategy(new RandomReadDataSourceStrategy());
                 }
-                else if((Long)value>=this.getRandomThrowLevelThreshold()){
+                else if(currentCount>=this.getRandomThrowLevelThreshold()){
                     this.updateLevel(BreakerState.RANDOM_THROW);
                     DataSourceManager.setDataSourceShardingStrategy(new RandomReadDataSourceStrategy());
                 }
-                else if((Long)value<this.getRecoveryThreshold()){
+                else if(currentCount<this.getRecoveryThreshold()){
                     this.updateLevel(BreakerState.DEFAULT);
                     DataSourceManager.setDataSourceShardingStrategy(new RWSeparationStrategy());
                 }

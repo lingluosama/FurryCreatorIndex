@@ -20,7 +20,7 @@ public class UserServiceController {
     @PostMapping("/register")
     Result<AuthDTO> registerUser(UserRegisterForm form) {
         try {
-            AuthDTO dto = userService.saveUser(form);
+            AuthDTO dto = userService.userRegister(form);
             return Result.success(dto);
         }catch (BusinessException e) {
             return Result.failed(e.getMessage());

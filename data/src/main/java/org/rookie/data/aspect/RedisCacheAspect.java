@@ -78,12 +78,9 @@ public class RedisCacheAspect {
                         3,
                         TimeUnit.MINUTES
                 );
-                return null;
 
-            }else{
-                throw e;
             }
-            
+                throw e;
         }
         return result;
         

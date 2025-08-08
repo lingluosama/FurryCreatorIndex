@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 
+/**
+ * 随机读策略
+ */
 public class RandomReadDataSourceStrategy implements DataSourceShardingStrategy {
     
     @Override

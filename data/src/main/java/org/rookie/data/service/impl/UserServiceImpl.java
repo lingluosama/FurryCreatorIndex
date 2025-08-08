@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.rookie.annotation.CacheDbSync;
 import org.rookie.annotation.RedisCache;
 import org.rookie.data.converter.UserConverter;
+import org.rookie.data.service.IRoleService;
+import org.rookie.data.utils.PasswordEncryptor;
 import org.rookie.model.form.UserRegisterForm;
 import org.rookie.exception.BusinessException;
 import org.rookie.exception.BusinessExceptionEnum;
@@ -24,6 +26,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     
     private final UserConverter userConverter;
+    private final PasswordEncryptor passwordEncryptor;
+    private final IRoleService roleService;
     //使用getMapper获取mapper
     
     @Override
@@ -33,7 +37,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    @RedisCache(key = "UserTable:%s",expire = 168)
     public User queryByid(Long id) {
         User user = queryChain().where(UserTableDef.USER.ID.eq(id)).one();
         if(user ==null){
@@ -43,11 +46,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    @CacheDbSync
-    public AuthDTO saveUser(UserRegisterForm form) {
+    public AuthDTO userRegister(UserRegisterForm form) {
         User user = userConverter.toUser(form);
         
-
+        user.setPasswordHash(passwordEncryptor.encrypt(user.getPasswordHash()));
+        
+        
         boolean exists = queryChain().where(UserTableDef.USER.USERNAME.eq(user.getUsername())).exists();
         if(exists){
             throw new BusinessException(HttpStatus.BAD_REQUEST.value(),"用户名已存在"); 
@@ -55,6 +59,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         boolean save = this.save(user);
         if (save){
+            
+            roleService.addRoleForUser(user.getId(),3L);
+            
             AuthDTO dto = new AuthDTO();
             dto.setId(user.getId());
             dto.setUserName(user.getUsername());
@@ -66,7 +73,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    @CacheDbSync
+    public AuthDTO userLogin(String username, String password) {
+        return null;
+    }
+
+    @Override
     public User updateUser(User user) {
 
         boolean update = updateById(user);

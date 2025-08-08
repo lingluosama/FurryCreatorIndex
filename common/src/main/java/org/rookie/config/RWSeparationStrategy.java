@@ -6,6 +6,9 @@ import com.mybatisflex.core.util.StringUtil;
 
 import java.lang.reflect.Method;
 
+/**
+ * 读写分离设置
+ */
 public class RWSeparationStrategy implements DataSourceShardingStrategy {
     @Override
     public String doSharding(String currentDataSourceKey
