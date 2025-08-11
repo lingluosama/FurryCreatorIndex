@@ -15,6 +15,6 @@ public class StartupService implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        roleService.setRolePermissionToRedis();
+//        roleService.setRolePermissionToRedis();x`
     }
 }

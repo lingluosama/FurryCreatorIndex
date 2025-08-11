@@ -1,4 +1,6 @@
 spring:
+  main:
+    web-application-type: reactive
   application:
     name: gateway-service
   cloud:
@@ -10,24 +12,15 @@ spring:
 
     gateway:
       routes:
-        - id: user-service-router
-          uri: lb://user-service
+        - id: business-service-router
+          uri: lb://business-service
           predicates:
-            - Path=/user/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: userFallback
-                fallbackUri: forward:/fallback/user
-        - id: admin_service-router
-          uri: lb://admin-server
-          predicates:
-            - Path=/file/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: adminFallback
-                fallbackUri: forward:/fallback/admin
+            - Path=/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: userFallback
+#                fallbackUri: forward:/fallback/user
 server:
   port: 8341
   

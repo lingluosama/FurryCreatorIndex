@@ -4,7 +4,9 @@ import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.form.UserRegisterForm;
 
 public interface UserService {
-    
+
+    String ping();
+
     AuthDTO userRegister(UserRegisterForm form);
     
 }
