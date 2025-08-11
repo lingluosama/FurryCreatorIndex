@@ -16,7 +16,7 @@ public interface IUserService extends IService<User>{
     AuthDTO userRegister(UserRegisterForm form);
     
     
-    AuthDTO userLogin(String username, String password); 
+    AuthDTO userLogin(String credentials, String password); 
     
     
     List<User> SearchUser(String keyword, Integer offset, Integer limit);

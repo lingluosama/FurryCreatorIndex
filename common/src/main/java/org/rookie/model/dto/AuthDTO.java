@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class AuthDTO {
     Long id;
     String userName;
-    String role;
+    String nickName;
+    String avatarUrl;
 }

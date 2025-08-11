@@ -4,6 +4,7 @@ import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.core.keygen.KeyGenerators;
 import lombok.Data; // 引入 Lombok 的 Data 注解
 
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Table("media_work")
 public class MediaWork implements Serializable {
 
-    @Id(keyType = KeyType.Auto)
+    @Id(keyType = KeyType.Generator, value = "FcIdGenerator")
     private Long id;
 
     private String title;

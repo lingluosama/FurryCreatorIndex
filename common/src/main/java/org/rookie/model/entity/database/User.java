@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table("user")
 @Data
 public class User {
-    @Id(keyType = KeyType.Auto)
+    @Id(keyType = KeyType.Generator, value = "FcIdGenerator")
     private Long id;
 
     private String username;

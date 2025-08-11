@@ -4,7 +4,7 @@ import com.mybatisflex.annotation.Id;import com.mybatisflex.annotation.KeyType;i
 
 @Table("work")
 public class WorkTable {
-        @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
+        @Id(keyType = KeyType.Generator, value = "FcIdGenerator")
         private Long id;
         
         private Long cid;
