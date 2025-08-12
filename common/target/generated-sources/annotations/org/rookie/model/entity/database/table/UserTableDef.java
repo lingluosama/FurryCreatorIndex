@@ -10,8 +10,6 @@ public class UserTableDef extends TableDef {
 
     public final QueryColumn ID = new QueryColumn(this, "id");
 
-    public final QueryColumn SALT = new QueryColumn(this, "salt");
-
     public final QueryColumn EMAIL = new QueryColumn(this, "email");
 
     public final QueryColumn STATUS = new QueryColumn(this, "status");
@@ -42,7 +40,7 @@ public class UserTableDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, SALT, EMAIL, STATUS, NICKNAME, USERNAME, AVATAR_URL, CREATED_AT, UPDATED_AT, LAST_LOGIN_AT, PHONE_NUMBER, PASSWORD_HASH, REGISTRATION_IP};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, EMAIL, STATUS, NICKNAME, USERNAME, AVATAR_URL, CREATED_AT, UPDATED_AT, LAST_LOGIN_AT, PHONE_NUMBER, PASSWORD_HASH, REGISTRATION_IP};
 
     public UserTableDef() {
         super("", "user");

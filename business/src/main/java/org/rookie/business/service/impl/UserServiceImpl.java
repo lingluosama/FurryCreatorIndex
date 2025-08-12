@@ -6,14 +6,18 @@ import org.rookie.business.feign.UserFeignClient;
 import org.rookie.business.service.UserService;
 import org.rookie.consts.Result;
 import org.rookie.model.dto.AuthDTO;
+import org.rookie.model.form.UserLoginForm;
 import org.rookie.model.form.UserRegisterForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserFeignClient userFeignClient;
 
     @Override
@@ -31,10 +35,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthDTO userLogin(String credentials, String password) {
+    public AuthDTO userLogin(UserLoginForm form) {
         Result<AuthDTO> dtoResult = userFeignClient.login(
-                credentials,
-                password
+                form
         );
         return dtoResult.getData();
     }

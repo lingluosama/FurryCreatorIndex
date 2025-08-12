@@ -54,4 +54,6 @@ sa-token:
   is-read-header: true     # 是否从请求头获取 Token
   is-read-cookie: true    #从cookie进行无感鉴权
 
-  
+logging:
+  level:
+    org.springframework.cloud.openfeign: DEBUG

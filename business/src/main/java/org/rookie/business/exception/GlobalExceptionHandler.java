@@ -16,14 +16,14 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(value = BusinessException.class)
     public Result<String>handleBusinessException(BusinessException e) {
-        log.warn("用户服务业务内异常: code={} msg={}", e.getCode(), e.getMessage());
+        //log.warn("业务内异常: code={} msg={}", e.getCode(), e.getMessage());
         return Result.failed(HttpStatus.BAD_REQUEST,e.getMessage());
         
     }
 
     @ExceptionHandler(Exception.class)
     public Result<String> handleSystemException(Exception e) {
-        log.error("用户服务怎么鼠了: ", e);
+        log.error("未预期的异常: ", e);
         return Result.failed(HttpStatus.INTERNAL_SERVER_ERROR,"系统繁忙，请稍后重试");
     }
     

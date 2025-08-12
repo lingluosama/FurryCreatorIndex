@@ -20,10 +20,7 @@ public class User {
 
     @JsonIgnore // 敏感信息，不直接暴露给前端
     private String passwordHash;
-
-    @JsonIgnore // 敏感信息，不直接暴露给前端
-    private String salt;
-
+    
     private String nickname;
 
     private String avatarUrl;

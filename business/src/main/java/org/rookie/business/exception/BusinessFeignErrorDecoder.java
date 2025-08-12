@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * 统一处理OpenFeign的非成功请求情况
+ * 统一处理OpenFeign的异常请求情况,是没有成功被处理为Result的响应结果
  */
 @Component
 public class BusinessFeignErrorDecoder implements ErrorDecoder {

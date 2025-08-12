@@ -16,6 +16,8 @@ import org.rookie.data.service.IUserService;
 import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.entity.database.User;
 import org.rookie.model.entity.database.table.UserTableDef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -23,11 +25,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+
 @Component
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
-    
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserConverter userConverter;
     private final PasswordEncryptor passwordEncryptor;
     private final IRoleService roleService;
@@ -96,8 +99,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if(tableUser==null){
             throw BusinessExceptionEnum.NOT_FIND_IN_DATABASE.exception();
         }
-        
-        boolean isCurrant = passwordEncryptor.matches(tableUser.getPasswordHash(), password);
+        log.warn(password);
+        boolean isCurrant = passwordEncryptor.matches( password,tableUser.getPasswordHash());
         if(!isCurrant){
             throw new BusinessException(HttpStatus.UNAUTHORIZED.value(), "用户密码错误");
         }
