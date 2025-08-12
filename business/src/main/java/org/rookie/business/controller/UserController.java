@@ -16,6 +16,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     
     private final UserService userService;
+
+    @GetMapping("/ping")
+    Result<String> ping() {
+        String pinged = userService.ping();
+        return Result.success(pinged);
+    }
     
     @SaCheckLogin
     @GetMapping("/ping")

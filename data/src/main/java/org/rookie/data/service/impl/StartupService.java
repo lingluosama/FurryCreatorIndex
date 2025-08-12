@@ -25,10 +25,10 @@ public class StartupService implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+//        roleService.setRolePermissionToRedis();x`
         //设置角色权限缓存
         roleService.setRolePermissionToRedis();
         //设置数据源分片策略
         DataSourceManager.setDataSourceShardingStrategy(new DataSourceStrategy());
-
     }
 }

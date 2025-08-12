@@ -17,6 +17,12 @@ public class UserServiceImpl implements UserService {
     private final UserFeignClient userFeignClient;
 
     @Override
+    public String ping() {
+        Result<Boolean> ping = userFeignClient.ping();
+        return ping.getData().toString();
+    }
+
+    @Override
     public AuthDTO userRegister(UserRegisterForm form) {
         Result<AuthDTO> dtoResult = userFeignClient.register(
                 form

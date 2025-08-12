@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Component
 @FeignClient(name = "data-service",path = "/data")
 public interface UserFeignClient {
-    
+
+    @GetMapping("/user/ping")
+    Result<Boolean> ping();
+
     @PostMapping("/user/register")
     Result<AuthDTO> register(
             UserRegisterForm form
