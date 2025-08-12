@@ -9,4 +9,6 @@ public interface UserService {
 
     AuthDTO userRegister(UserRegisterForm form);
     
+    AuthDTO userLogin(String credentials, String password);
+    
 }

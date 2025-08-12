@@ -1,6 +1,7 @@
 package org.rookie.business.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import lombok.RequiredArgsConstructor;
 import org.rookie.business.service.UserService;
 import org.rookie.consts.Result;
@@ -22,12 +23,33 @@ public class UserController {
         return Result.success(pinged);
     }
     
+    @SaCheckLogin
+    @GetMapping("/ping")
+    Result<Boolean> ping(){
+        return Result.success(true);
+    }
+    
     @PostMapping("/register")
     Result<AuthDTO> userRegister(
             UserRegisterForm form
     ) {
         try {
             AuthDTO dto = userService.userRegister(form);
+            return Result.success(dto);
+        }catch (BusinessException e) {
+            return Result.failed(e.getMessage());
+        }catch (Exception e) {
+            throw e;
+        }
+    }
+    
+    @GetMapping("/login")
+    Result<AuthDTO> userLogin(
+            String credentials,
+            String password
+    ) {
+        try {
+            AuthDTO dto = userService.userLogin(credentials, password);
             return Result.success(dto);
         }catch (BusinessException e) {
             return Result.failed(e.getMessage());

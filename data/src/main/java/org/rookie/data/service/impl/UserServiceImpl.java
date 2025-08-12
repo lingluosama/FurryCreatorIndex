@@ -1,5 +1,6 @@
 package org.rookie.data.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.rookie.annotation.CacheDbSync;
@@ -15,10 +16,12 @@ import org.rookie.data.service.IUserService;
 import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.entity.database.User;
 import org.rookie.model.entity.database.table.UserTableDef;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +31,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private final UserConverter userConverter;
     private final PasswordEncryptor passwordEncryptor;
     private final IRoleService roleService;
+    
+    @Value("${fc-config.default-user-role-id}")
+    private Long defaultUserPermissionId;
     //使用getMapper获取mapper
     
     @Override
@@ -50,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = userConverter.toUser(form);
         
         user.setPasswordHash(passwordEncryptor.encrypt(user.getPasswordHash()));
-        
+        user.setAvatarUrl("https://pbs.twimg.com/media/FhS2eMFUcAEGIYr.jpg");
         
         boolean exists = queryChain().where(UserTableDef.USER.USERNAME.eq(user.getUsername())).exists();
         if(exists){
@@ -60,12 +66,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         boolean save = this.save(user);
         if (save){
             
-            roleService.addRoleForUser(user.getId(),3L);
+            //读取yml中的默认权限id配置
+            roleService.addRoleForUser(user.getId(),defaultUserPermissionId);
+
+            //处理SaToken登录
+            StpUtil.login(user.getId());
+            List<String> roles = roleService.getUserRoles(user.getId());
+            StpUtil.getSession().set("roleList",roles);
+            
             
             AuthDTO dto = new AuthDTO();
             dto.setId(user.getId());
             dto.setUserName(user.getUsername());
-            dto.setRole("TODO://");
             return dto;
         }else{
             throw new BusinessException(HttpStatus.BAD_REQUEST.value(), "未保存用户");
@@ -73,8 +85,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public AuthDTO userLogin(String username, String password) {
-        return null;
+    public AuthDTO userLogin(String credentials, String password) {
+
+        AuthDTO dto = new AuthDTO();
+
+        User tableUser = this.queryChain()
+                .where(UserTableDef.USER.USERNAME.eq(credentials))
+                .or(UserTableDef.USER.EMAIL.eq(credentials))
+                .one();
+        if(tableUser==null){
+            throw BusinessExceptionEnum.NOT_FIND_IN_DATABASE.exception();
+        }
+        
+        boolean isCurrant = passwordEncryptor.matches(tableUser.getPasswordHash(), password);
+        if(!isCurrant){
+            throw new BusinessException(HttpStatus.UNAUTHORIZED.value(), "用户密码错误");
+        }
+
+        //处理SaToken登录
+        StpUtil.login(tableUser.getId());
+        List<String> roles = roleService.getUserRoles(tableUser.getId());
+        StpUtil.getSession().set("roleList",roles);
+        
+        dto.setUserName(tableUser.getUsername());
+        Optional.ofNullable(tableUser.getNickname()).ifPresent(dto::setNickName);
+        dto.setAvatarUrl(tableUser.getAvatarUrl());
+        dto.setId(tableUser.getId());
+        
+        return dto;
     }
 
     @Override

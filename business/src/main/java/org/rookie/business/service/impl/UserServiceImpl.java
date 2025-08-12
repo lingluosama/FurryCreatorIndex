@@ -28,6 +28,14 @@ public class UserServiceImpl implements UserService {
                 form
         );
         return dtoResult.getData();
-        
+    }
+
+    @Override
+    public AuthDTO userLogin(String credentials, String password) {
+        Result<AuthDTO> dtoResult = userFeignClient.login(
+                credentials,
+                password
+        );
+        return dtoResult.getData();
     }
 }
