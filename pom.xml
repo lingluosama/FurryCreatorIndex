@@ -75,12 +75,7 @@
             <artifactId>spring-cloud-starter-stream-kafka</artifactId>
             <version>4.2.0</version>
         </dependency>
-
-        <!-- Redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
+        
             <!-- Druid 连接池 -->
     <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
             <dependency>
@@ -105,17 +100,19 @@
             <version>1.5.5.Final</version> <scope>provided</scope>
         </dependency>
 
-        <!--使用SaToken做角色鉴权-->
+
+        <!-- Sa-Token 整合 Redis （使用 jackson 序列化方式） -->
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot3-starter</artifactId>
-            <version>1.38.0</version> </dependency>
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-jwt</artifactId>
-            <version>1.38.0</version>
+            <artifactId>sa-token-redis-jackson</artifactId>
+            <version>1.44.0</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+
     </dependencies>
     <dependencyManagement>
         <dependencies>

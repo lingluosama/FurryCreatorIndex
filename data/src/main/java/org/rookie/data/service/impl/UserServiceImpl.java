@@ -110,6 +110,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<String> roles = roleService.getUserRoles(tableUser.getId());
         StpUtil.getSession().set("roleList",roles);
         
+        //手动返回token,使业务层通过feign调用能拿到
+        dto.setToken(StpUtil.getTokenValue());
+        
         dto.setUserName(tableUser.getUsername());
         Optional.ofNullable(tableUser.getNickname()).ifPresent(dto::setNickName);
         dto.setAvatarUrl(tableUser.getAvatarUrl());

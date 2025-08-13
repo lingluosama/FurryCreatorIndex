@@ -7,6 +7,7 @@
         <artifactId>FurryCreatorIndex</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <groupId>org.rookie</groupId>
     <artifactId>api-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -28,8 +29,8 @@
     <properties>
         <java.version>17</java.version>
     </properties>
-    <dependencies>
 
+    <dependencies>
         <dependency>
             <groupId>org.rookie</groupId>
             <artifactId>common</artifactId>
@@ -54,33 +55,33 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
-        <!--         熔断降级 -->
-        <!--  https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-circuitbreaker-reactor-resilience4j  -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
             <version>3.2.1</version>
         </dependency>
-        <!--         监控指标 -->
-        <!--  https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator  -->
+        
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
             <version>3.5.0</version>
         </dependency>
+
+
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-core</artifactId>
-            <version>1.38.0</version>
-            <scope>compile</scope>
+            <artifactId>sa-token-reactor-spring-boot3-starter</artifactId>
+            <version>1.44.0</version>
         </dependency>
+        
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

@@ -1,28 +1,32 @@
 package org.rookie.apigateway.auth;
 
-import cn.dev33.satoken.interceptor.SaInterceptor;
+import cn.dev33.satoken.reactor.filter.SaReactorFilter;
+import cn.dev33.satoken.router.SaRouter;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaResult;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * [Sa-Token 权限认证] 配置类 
+ * @author click33
+ */
 @Configuration
-public class SaTokenConfigure implements WebMvcConfigurer {
-
-    /**
-     * 注册 Sa-Token 的拦截器，打开注解式鉴权功能
-     * 注意:不会主动监测token有效性，记得使用@SaCheckLogin监测登录状态
-     * 这里的路由只是声明了SaToken的管辖范围
-     */
-    private static final String BASEURL="/api/v1/defense";
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        // 注册 Sa-Token 拦截器，定义拦截规则
-        registry.addInterceptor(new SaInterceptor()) // 传入 new SaInterceptor()，它会自动处理注解
-                .addPathPatterns("/**")//管辖所有路由
-                .excludePathPatterns(//放行路由配置
-                        BASEURL+"/user/register",
-                        BASEURL+"/user/login",
-                        BASEURL+"/user/logout"                );
+public class SaTokenConfigure {
+    // 注册 Sa-Token全局过滤器 
+    @Bean
+    public SaReactorFilter getSaReactorFilter() {
+        return new SaReactorFilter()
+                // 拦截地址 
+                .addInclude("/**")    /* 拦截全部path */
+                // 开放地址 
+                .addExclude("/favicon.ico","/user/login","/user/register")
+                // 鉴权方法：每次访问进入 
+                .setAuth(obj ->{})
+                // 异常处理方法：每次setAuth函数出现异常时进入 
+                .setError(e -> {
+                    return SaResult.error("网关鉴权失败");
+                })
+                ;
     }
 }

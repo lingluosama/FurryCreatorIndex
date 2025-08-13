@@ -12,4 +12,5 @@ public class AuthDTO {
     String userName;
     String nickName;
     String avatarUrl;
+    String token;
 }

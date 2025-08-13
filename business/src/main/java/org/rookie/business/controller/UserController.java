@@ -2,6 +2,9 @@ package org.rookie.business.controller;
 
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.stp.StpUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.rookie.business.service.UserService;
 import org.rookie.consts.Result;
@@ -12,6 +15,10 @@ import org.rookie.model.form.UserRegisterForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigInteger;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -44,17 +51,50 @@ public class UserController {
     
     @GetMapping("/login")
     Result<AuthDTO> userLogin(
-            UserLoginForm form
+            UserLoginForm form,
+            HttpServletResponse response
     ) {
         try {
             log.warn(form.toString());
+            
             AuthDTO dto = userService.userLogin(form);
+            String token = dto.getToken();
+            if(token!=null){
+                Cookie saTokenCookie = new Cookie("fc-token", token);
+
+                saTokenCookie.setPath("/");
+                saTokenCookie.setMaxAge(86400);
+                saTokenCookie.setHttpOnly(false);
+                saTokenCookie.setSecure(false); 
+                saTokenCookie.setDomain("localhost");
+
+                response.addCookie(saTokenCookie);
+            }
+
+
+            dto.setToken(fakeTokenGenerate(24));
             return Result.success(dto);
         }catch (BusinessException e) {
             return Result.failed(e.getMessage());
         }catch (Exception e) {
             throw e;
         }
+    }
+
+    //处理Auth响应中已经存入cookie不应该返回的token字段
+    public static String fakeTokenGenerate(int length) {
+        UUID uuid = UUID.randomUUID();
+        BigInteger bigInt = new BigInteger(uuid.toString().replace("-", ""), 16);
+        // 将BigInteger转换为二进制字符串
+        String binaryString = bigInt.toString(2);
+
+        // 如果生成的字符串长度不足，前面用0补齐
+        while (binaryString.length() < length) {
+            binaryString = "0" + binaryString;
+        }
+
+        // 截取到需要的长度
+        return binaryString.substring(0, length);
     }
     
 }
