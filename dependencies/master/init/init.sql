@@ -357,4 +357,3 @@ create table wiki_entry_version
     primary key (wiki_entry_id, version_number)
 )
     comment '维基条目版本表';
-

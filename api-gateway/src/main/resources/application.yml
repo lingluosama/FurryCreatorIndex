@@ -21,8 +21,9 @@ spring:
         - id: business-service-router
           uri: lb://business-service
           predicates:
-            - Path=/**
+            - Path=/api/**
           filters:
+            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 name: userFallback

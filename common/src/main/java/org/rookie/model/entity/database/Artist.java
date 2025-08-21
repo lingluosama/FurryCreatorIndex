@@ -32,7 +32,9 @@ public class Artist implements Serializable {
 
     private String status; // 例如 ACTIVE, INACTIVE, SUSPENDED
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 
+    @Column(onInsertValue = "now()", onUpdateValue = "now()")
     private LocalDateTime updatedAt;
 }

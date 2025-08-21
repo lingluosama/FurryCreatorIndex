@@ -35,6 +35,8 @@ spring:
         server-addr: localhost:8848
         register-enabled: true
         ephemeral: true
+  main:
+    allow-bean-definition-overriding: true
 
 mybatis-flex:
   datasource:

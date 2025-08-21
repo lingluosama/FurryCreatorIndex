@@ -1,16 +1,14 @@
 package org.rookie.model.entity.database;
 
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Id;
-import com.mybatisflex.annotation.KeyType;
-import com.mybatisflex.annotation.Table;
+import com.mybatisflex.annotation.*;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import lombok.Data; // 引入 Lombok 的 Data 注解
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Data // 自动生成 Getter, Setter, equals, hashCode, toString
+@Data
 @Table("wiki_category")
 public class WikiCategory implements Serializable {
 
@@ -25,7 +23,16 @@ public class WikiCategory implements Serializable {
 
     private Integer sortOrder;
 
+    @Column(onInsertValue = "now()")
+
     private LocalDateTime createdAt;
 
+    @Column(onInsertValue = "now()",onUpdateValue = "now()")
     private LocalDateTime updatedAt;
+
+    @RelationManyToOne(selfField = "parentId",targetField = "id",targetTable = "wiki_category")
+    private WikiCategory parent;
+
+    @RelationOneToMany(selfField ="id" ,targetField = "parentId",targetTable = "wiki_category")
+    private List<WikiCategory> children;
 }

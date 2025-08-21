@@ -20,5 +20,6 @@ public class Permission implements Serializable {
 
     private String description;
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 }

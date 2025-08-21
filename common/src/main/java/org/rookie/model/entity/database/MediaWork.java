@@ -34,7 +34,9 @@ public class MediaWork implements Serializable {
 
     private String officialWebsiteUrl;
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 
+    @Column(onInsertValue = "now()", onUpdateValue = "now()")
     private LocalDateTime updatedAt;
 }

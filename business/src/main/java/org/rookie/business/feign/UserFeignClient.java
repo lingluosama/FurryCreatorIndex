@@ -7,13 +7,10 @@ import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.form.UserLoginForm;
 import org.rookie.model.form.UserRegisterForm;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
-@Component
 @FeignClient(name = "data-service",path = "/data",configuration = FeignConfig.class)
 public interface UserFeignClient {
 

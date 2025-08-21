@@ -26,7 +26,9 @@ public class Artwork implements Serializable {
     // JSON 字段
     private String imageUrls; // 存储 JSON 字符串
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 
+    @Column(onInsertValue = "now()", onUpdateValue = "now()")
     private LocalDateTime updatedAt;
 }

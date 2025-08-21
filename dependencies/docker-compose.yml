@@ -29,7 +29,6 @@ services:
     networks:
       - micro-net
 
-
   # 从数据库 (读操作)
   reader:
     image: mysql:8.0
@@ -41,8 +40,8 @@ services:
       MYSQL_DATABASE: testdb
     volumes:
       - ./slave/conf:/etc/mysql/conf.d
-      - ./slave/init:/docker-entrypoint-initdb.d  # 添加初始化脚本
-    command:  # 添加GTID配置命令
+      - ./slave/init:/docker-entrypoint-initdb.d
+    command:
       --server-id=2
       --gtid_mode=ON
       --enforce_gtid_consistency=ON
@@ -59,19 +58,20 @@ services:
       - "6379:6379"
     networks:
       - micro-net
+
   oap:
     image: apache/skywalking-oap-server:9.7.0
     container_name: skywalking-oap
     ports:
-      - "11800:11800"  # Agent gRPC 上报端口
-      - "12800:12800"  # UI 查询端口
+      - "11800:11800"
+      - "12800:12800"
     environment:
-      SW_STORAGE: h2   # 使用 H2 存储
+      SW_STORAGE: h2
       SW_H2_DRIVER: org.h2.jdbcx.JdbcDataSource
       SW_H2_URL: jdbc:h2:mem:skywalking-oap-db
       SW_H2_USER: sa
       SW_H2_PASSWORD: ""
-      JAVA_OPTS: "-Xms512m -Xmx512m"  # 减少内存占用
+      JAVA_OPTS: "-Xms512m -Xmx512m"
     networks:
       - micro-net
 
@@ -79,7 +79,7 @@ services:
     image: apache/skywalking-ui:9.7.0
     container_name: skywalking-ui
     ports:
-      - "8080:8080"    # Web 访问端口
+      - "8080:8080"
     environment:
       SW_OAP_ADDRESS: http://oap:12800
       SW_OAP_REST_RETRY_TIMEOUT: 300
@@ -93,18 +93,17 @@ services:
     image: nacos/nacos-server:v2.3.0
     container_name: nacos-server
     ports:
-      - "8848:8848"   # 控制台端口
-      - "9848:9848"   # gRPC 端口
-      - "9849:9849"   # gRPC 端口
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
     environment:
-      MODE: standalone        # 单机模式
+      MODE: standalone
       SPRING_DATASOURCE_PLATFORM: mysql
-      MYSQL_SERVICE_HOST: writer  # 使用主库作为存储
+      MYSQL_SERVICE_HOST: writer
       MYSQL_SERVICE_PORT: 3306
       MYSQL_SERVICE_USER: root
       MYSQL_SERVICE_PASSWORD: 12345
-      MYSQL_SERVICE_DB_NAME: nacos_config  # 必须与初始化库名一致
-      # 增加连接参数
+      MYSQL_SERVICE_DB_NAME: nacos_config
       MYSQL_SERVICE_DB_PARAM: "characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true"
     depends_on:
       writer:
@@ -116,6 +115,7 @@ services:
       retries: 5
     networks:
       - micro-net
+
   kafka:
     image: 'bitnami/kafka:latest'
     ports:
@@ -125,9 +125,12 @@ services:
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://0.0.0.0:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:  # 加入网络
+      - micro-net  # 关键步骤！
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -139,7 +142,63 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     depends_on:
       - kafka
+    networks:  # 加入同一网络
+      - micro-net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - micro-net
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - micro-net
+
+  kafka-connect:
+    image: my-debezium-connect-es:2.6  # 使用包含 Debezium 插件的镜像
+    container_name: kafka-connect
+    ports:
+      - "8083:8083" # 连接器管理API端口
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092 # 指向你的 Kafka 服务
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: my_connect_configs
+      OFFSET_STORAGE_TOPIC: my_connect_offsets
+      STATUS_STORAGE_TOPIC: my_connect_statuses
+      # ... 其他配置
+    networks:
+      - micro-net
+    depends_on:
+      - kafka
+      - writer # 依赖 MySQL 服务，以便能连接到它
 
 networks:
   micro-net:
     driver: bridge
+
+volumes:
+  esdata:

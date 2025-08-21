@@ -33,5 +33,6 @@ public class Report implements Serializable {
 
     private LocalDateTime handledAt;
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 }

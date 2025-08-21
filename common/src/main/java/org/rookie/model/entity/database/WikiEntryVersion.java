@@ -25,6 +25,7 @@ public class WikiEntryVersion implements Serializable {
 
     private Long createdBy;
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 
     private String comment;

@@ -29,7 +29,9 @@ public class Comment implements Serializable {
 
     private String status; // 例如 APPROVED, PENDING, SPAM
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 
+    @Column(onInsertValue = "now()", onUpdateValue = "now()")
     private LocalDateTime updatedAt;
 }

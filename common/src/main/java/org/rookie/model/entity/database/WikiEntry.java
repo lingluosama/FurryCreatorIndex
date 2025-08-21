@@ -33,11 +33,13 @@ public class WikiEntry implements Serializable {
 
     private Long createdBy;
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 
-    private Long updatedBy;
-
+    @Column(onInsertValue = "now()", onUpdateValue = "now()")
     private LocalDateTime updatedAt;
+
+    private Long updatedBy;
 
     @Column(isLogicDelete = true) // 逻辑删除字段
     private Boolean isDeleted;
