@@ -1,14 +1,12 @@
 package org.rookie.model.entity.database;
 
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Id;
-import com.mybatisflex.annotation.KeyType;
-import com.mybatisflex.annotation.Table;
+import com.mybatisflex.annotation.*;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import lombok.Data; // 引入 Lombok 的 Data 注解
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data // 自动生成 Getter, Setter, equals, hashCode, toString
 @Table("comment")
@@ -34,4 +32,11 @@ public class Comment implements Serializable {
 
     @Column(onInsertValue = "now()", onUpdateValue = "now()")
     private LocalDateTime updatedAt;
+
+    @RelationOneToMany(selfField ="id",targetField = "parentId",targetTable = "comment")
+    private List<Comment> children;
+
+    @RelationOneToOne(selfField = "userId",targetField = "id",targetTable = "user",selectColumns ={"userName","avatarUrl"})
+    private User user;
+
 }

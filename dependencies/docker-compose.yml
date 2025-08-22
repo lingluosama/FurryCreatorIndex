@@ -130,7 +130,7 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     networks:  # 加入网络
-      - micro-net  # 关键步骤！
+      - micro-net
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -184,7 +184,7 @@ services:
     ports:
       - "8083:8083" # 连接器管理API端口
     environment:
-      BOOTSTRAP_SERVERS: kafka:9092 # 指向你的 Kafka 服务
+      BOOTSTRAP_SERVERS: kafka:9092
       GROUP_ID: 1
       CONFIG_STORAGE_TOPIC: my_connect_configs
       OFFSET_STORAGE_TOPIC: my_connect_offsets
