@@ -36,7 +36,7 @@ public class Comment implements Serializable {
     @RelationOneToMany(selfField ="id",targetField = "parentId",targetTable = "comment")
     private List<Comment> children;
 
-    @RelationOneToOne(selfField = "userId",targetField = "id",targetTable = "user",selectColumns ={"userName","avatarUrl"})
+    @RelationOneToOne(selfField = "userId",targetField = "id",targetTable = "user",selectColumns ={"username","avatar_url"})
     private User user;
 
 }

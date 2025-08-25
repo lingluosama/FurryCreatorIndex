@@ -1,9 +1,6 @@
 package org.rookie.model.entity.database;
 
-import com.mybatisflex.annotation.Column;
-import com.mybatisflex.annotation.Id;
-import com.mybatisflex.annotation.KeyType;
-import com.mybatisflex.annotation.Table;
+import com.mybatisflex.annotation.*;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import lombok.Data; // 引入 Lombok 的 Data 注解
 
@@ -43,4 +40,13 @@ public class WikiEntry implements Serializable {
 
     @Column(isLogicDelete = true) // 逻辑删除字段
     private Boolean isDeleted;
+
+    @RelationOneToOne(selfField = "createBy",targetField = "id",targetTable = "user",selectColumns ={"nickname","avatar_url"})
+    private User creator;
+
+    @RelationOneToOne(selfField = "updateBy",targetTable = "id",targetField = "user",selectColumns ={"nickname","avatar_url"})
+    private User updater;
+
+    @RelationOneToOne(selfField = "categoryId",targetField = "id",targetTable = "wiki_category",selectColumns ={"name"})
+    private WikiCategory category;
 }

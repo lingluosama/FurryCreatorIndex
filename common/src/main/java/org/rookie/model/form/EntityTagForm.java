@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class EntityTagForm {
     private Long entityId;
-    private List<Long> tagId;
+    private List<Long> tagIds;
     private String entityType;
 
 }

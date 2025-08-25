@@ -10,7 +10,7 @@ import org.rookie.data.converter.TagConverter;
 import org.rookie.data.mapper.CommentMapper;
 import org.rookie.data.mapper.EntityTagMapper;
 import org.rookie.data.mapper.TagMapper;
-import org.rookie.data.service.ITagCommentService;
+import org.rookie.data.service.TagCommentService;
 import org.rookie.model.bo.CommentBO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.entity.database.Comment;
@@ -19,6 +19,7 @@ import org.rookie.model.entity.database.Tag;
 import org.rookie.model.entity.database.table.EntityTagTableDef;
 import org.rookie.model.entity.database.table.TagTableDef;
 import org.rookie.model.form.CommentForm;
+import org.rookie.model.form.EntityTagsForm;
 import org.rookie.model.form.TagForm;
 import org.rookie.model.query.EntityCommentPageQuery;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ import static org.rookie.model.entity.database.table.CommentTableDef.COMMENT;
 
 @Service
 @RequiredArgsConstructor
-public class TagCommentServiceImpl implements ITagCommentService {
+public class TagCommentServiceImpl implements TagCommentService {
 
     private final CommentMapper commentMapper;
 
@@ -72,28 +73,28 @@ public class TagCommentServiceImpl implements ITagCommentService {
     }
 
     @Override
-    public Void overwriteEntityTags(Long entityId, String entityType, List<Long> newTags) {
+    public Void overwriteEntityTags(EntityTagsForm form) {
         List<Long> oldTagIds = QueryChain.of(entityTagMapper)
                 .select(EntityTagTableDef.ENTITY_TAG.TAG_ID)
-                .where(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(entityId))
+                .where(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(form.getEntityId()))
                 .list().stream().map(EntityTag::getTagId).toList();
 
         Set<Long> oldSet=new HashSet<>(oldTagIds);
-        Set<Long> newSet=new HashSet<>(newTags);
+        Set<Long> newSet=new HashSet<>(form.getTagIds());
 
         Set<Long> toDelete=new HashSet<>(oldSet);
         toDelete.removeAll(newSet);
 
-        Set<Long> toAdd=new HashSet<>(newTags);
+        Set<Long> toAdd=new HashSet<>(form.getTagIds());
         toAdd.removeAll(oldSet);
 
 
         if(!toDelete.isEmpty())entityTagMapper.deleteByCondition(
-                EntityTagTableDef.ENTITY_TAG.ENTITY_TYPE.eq(entityType)
+                EntityTagTableDef.ENTITY_TAG.ENTITY_TYPE.eq(form.getEntityType())
                         .and(EntityTagTableDef.ENTITY_TAG.TAG_ID.in(toDelete))
-                        .and(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(entityId)));
+                        .and(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(form.getEntityId())));
         if(!toAdd.isEmpty()){
-            List<EntityTag> entityTags = toAdd.stream().map(tagId -> new EntityTag(entityId, entityType, tagId)).toList();
+            List<EntityTag> entityTags = toAdd.stream().map(tagId -> new EntityTag(form.getEntityId(), form.getEntityType(), tagId)).toList();
             entityTagMapper.insertBatch(entityTags);
         }
 
@@ -123,5 +124,10 @@ public class TagCommentServiceImpl implements ITagCommentService {
         dto.setRecords(commentConverter.toCommentBOList(page.getRecords()));
 
         return dto;
+    }
+
+    @Override
+    public Boolean deleteComment(Long commentId) {
+        return commentMapper.deleteById(commentId)>0;
     }
 }
