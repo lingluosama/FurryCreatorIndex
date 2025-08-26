@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "data-service", path = "/data", configuration = FeignConfig.class)
+@FeignClient(name = "data-service", path = "/data/wiki-categories", configuration = FeignConfig.class)
 public interface WikiCategoryFeignClient {
 
-    @PostMapping("/wiki-categories")
+    @PostMapping("")
     Result<WikiCategory> createWikiCategory(@RequestBody WikiCategoryForm form);
 
-    @GetMapping("/wiki-categories")
+    @GetMapping("")
     Result<List<CategoryDetailDTO>> getAllCategory();
 
-    @GetMapping("/wiki-categories/{id}")
+    @GetMapping("/{id}")
     Result<CategoryDetailDTO> getCategoryDetailAndChildrenById(@PathVariable("id") Long id);
 
-    @DeleteMapping("/wiki-categories/{id}")
+    @DeleteMapping("/{id}")
     Result<Void> deleteCategory(@PathVariable("id") Long id);
 }

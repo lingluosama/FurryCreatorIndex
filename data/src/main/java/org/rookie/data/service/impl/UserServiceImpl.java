@@ -100,7 +100,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if(tableUser==null){
             throw BusinessExceptionEnum.NOT_FIND_IN_DATABASE.exception();
         }
-        log.warn(password);
         boolean isCurrant = passwordEncryptor.matches( password,tableUser.getPasswordHash());
         if(!isCurrant){
             throw new BusinessException(HttpStatus.UNAUTHORIZED.value(), "用户密码错误");

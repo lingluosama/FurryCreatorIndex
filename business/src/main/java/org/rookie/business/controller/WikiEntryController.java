@@ -1,27 +1,94 @@
 package org.rookie.business.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
 import lombok.RequiredArgsConstructor;
+import org.rookie.business.service.WikiEntryService;
 import org.rookie.consts.Result;
+import org.rookie.model.bo.WikiEntryBO;
+import org.rookie.model.dto.PageResult;
+import org.rookie.model.dto.WikiEntryDetailDTO;
 import org.rookie.model.entity.database.WikiEntry;
+import org.rookie.model.entity.database.WikiEntryVersion;
 import org.rookie.model.form.WikiEntryForm;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.rookie.model.query.WikiEntryPageQuery;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/wiki-entries")
 @RequiredArgsConstructor
 public class WikiEntryController {
 
+    private final WikiEntryService wikiEntryService;
+
+    @SaCheckPermission("wiki_entry:create")
     @PostMapping
     public Result<WikiEntry> createWikiEntry(WikiEntryForm form) {
 
 
+        WikiEntry entry = wikiEntryService.createWikiEntry(form);
 
-        return null;
+        return Result.success(entry);
     }
+    @GetMapping
+    public Result<PageResult<WikiEntryBO>> queryWikiEntry(WikiEntryPageQuery query){
+        PageResult<WikiEntryBO> pageResult = wikiEntryService.queryWikiEntry(query);
+
+        return Result.success(pageResult);
+
+    }
+
+    @GetMapping("/{id}")
+    public Result<WikiEntryDetailDTO> getWikiEntryById(@PathVariable("id") Long id) {
+        WikiEntryDetailDTO detailDTO = wikiEntryService.getWikiEntryDetailById(id);
+        return Result.success(detailDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public Result<Void> deleteWikiEntry(@PathVariable("id") Long id) {
+        Boolean result = wikiEntryService.deleteWikiEntry(id);
+        if(result){
+            return Result.success();
+        }else{
+            return Result.failed("删除失败");
+        }
+    }
+
+    @SaCheckPermission("wiki_entry:update")
+    @PostMapping("/{id}/versions")
+    public Result<Boolean> submitNewEntryVersion( @RequestBody WikiEntryForm form) {
+
+        long uid = Long.parseLong(StpUtil.getLoginId().toString());
+        form.setUpdatedBy(uid);
+
+        Boolean result = wikiEntryService.submitNewEntryVersion(form);
+        if(result){
+            return Result.success();
+        }else{
+            return Result.failed("提交失败");
+        }
+    }
+
+    @GetMapping("/{id}/versions")
+    public Result<List<WikiEntryVersion>> queryWikiEntryVersion(@PathVariable("id") Long id) {
+        List<WikiEntryVersion> versions = wikiEntryService.queryWikiEntryVersion(id);
+        return Result.success(versions);
+    }
+
+    @GetMapping("/{id}/verisons/{versionNumber}")
+    public Result<WikiEntryDetailDTO> getWikiEntryWithVersion(
+            @PathVariable("id") Long id,
+            @PathVariable("versionNumber") Integer versionNumber) {
+        WikiEntryDetailDTO detailDTO = wikiEntryService.getWikiEntryWithVersion(id, versionNumber);
+        return Result.success(detailDTO);
+    }
+
+
 
 
 }

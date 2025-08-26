@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 @Table("wiki_entry_version")
 public class WikiEntryVersion implements Serializable {
 
-    @Id(keyType = KeyType.Generator, value = "FcIdGenerator")
-    private Long id;
-
+    @Id(keyType = KeyType.None)
     private Long wikiEntryId;
 
+    @Id(keyType = KeyType.None)
+    @Column(value = "version_number")
     private Integer versionNumber;
 
     private String content;

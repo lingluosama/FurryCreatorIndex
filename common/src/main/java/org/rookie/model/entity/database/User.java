@@ -35,8 +35,10 @@ public class User {
 
     private LocalDateTime lastLoginAt;
 
+    @Column(onInsertValue = "now()")
     private LocalDateTime createdAt;
 
+    @Column(onInsertValue = "now()", onUpdateValue = "now()")
     private LocalDateTime updatedAt;
 
     

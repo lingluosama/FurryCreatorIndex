@@ -117,7 +117,7 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
         WikiEntryVersion oldVersion = QueryChain.of(versionMapper)
                 .where(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.WIKI_ENTRY_ID.eq(form.getId()))
                 .orderBy(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.VERSION_NUMBER.asc(),
-                        WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.ID.desc())
+                        WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.VERSION_NUMBER.desc())
                 .one();
         versionEntity.setVersionNumber(oldVersion.getVersionNumber()+1);
 

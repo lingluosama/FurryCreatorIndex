@@ -8,8 +8,6 @@ public class WikiEntryVersionTableDef extends TableDef {
 
     public static final WikiEntryVersionTableDef WIKI_ENTRY_VERSION = new WikiEntryVersionTableDef();
 
-    public final QueryColumn ID = new QueryColumn(this, "id");
-
     public final QueryColumn COMMENT = new QueryColumn(this, "comment");
 
     public final QueryColumn CONTENT = new QueryColumn(this, "content");
@@ -30,7 +28,7 @@ public class WikiEntryVersionTableDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, COMMENT, CONTENT, CREATED_AT, CREATED_BY, WIKI_ENTRY_ID, VERSION_NUMBER};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{COMMENT, CONTENT, CREATED_AT, CREATED_BY, WIKI_ENTRY_ID, VERSION_NUMBER};
 
     public WikiEntryVersionTableDef() {
         super("", "wiki_entry_version");

@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/data")
+@RestController
+@RequestMapping("/data")
 @RequiredArgsConstructor
 public class TagCommentController {
 
@@ -33,8 +34,8 @@ public class TagCommentController {
         return Result.success(tags);
     }
 
-    @GetMapping("/{entityId}/tags")
-    Result<List<Tag>> getTagsByEntityId(@PathVariable Long entityId, String entityType){
+    @GetMapping("/{entityId}/tags/{entityType}")
+    Result<List<Tag>> getTagsByEntityId(@PathVariable Long entityId,@PathVariable String entityType){
         List<Tag> tags = tagCommentService.getTagsByEntityId(entityId, entityType);
         return Result.success(tags);
     }

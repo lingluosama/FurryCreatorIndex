@@ -25,10 +25,10 @@ public interface WikiEntryConverter {
 
     @Mapping(target = "creator", source = "creator.username")
     @Mapping(target = "creatorId", source = "creator.id")
-    @Mapping(target = "creatorAvatarUrl", source = "creator.avatar_url")
+    @Mapping(target = "creatorAvatarUrl", source = "creator.avatarUrl")
     @Mapping(target = "updater", source = "updater.username")
     @Mapping(target = "updaterId", source = "updater.id")
-    @Mapping(target = "updaterAvatarUrl", source = "updater.avatar_url")
+    @Mapping(target = "updaterAvatarUrl", source = "updater.avatarUrl")
     @Mapping(target = "category",source = "category.name")
     WikiEntryDetailDTO toDetailDTO(WikiEntry entity);
 

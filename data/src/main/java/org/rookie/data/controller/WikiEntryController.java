@@ -1,16 +1,21 @@
 package org.rookie.data.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.rookie.consts.Result;
 import org.rookie.data.service.IWikiEntryService;
 import org.rookie.model.bo.WikiEntryBO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
 import org.rookie.model.entity.database.WikiEntry;
+import org.rookie.model.entity.database.WikiEntryVersion;
 import org.rookie.model.form.WikiEntryForm;
 import org.rookie.model.query.WikiEntryPageQuery;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequestMapping("/data/wiki-entries")
 @RequiredArgsConstructor
@@ -19,12 +24,12 @@ public class WikiEntryController {
     private final IWikiEntryService wikiEntryService;
 
     @PostMapping
-    Result<WikiEntry> createWikiEntry(WikiEntryForm form) {
+    Result<WikiEntry> createWikiEntry(@RequestBody WikiEntryForm form) {
         return Result.success(wikiEntryService.createWikiEntry(form));
     }
 
-    @GetMapping
-    Result<PageResult<WikiEntryBO>> queryWikiEntry(WikiEntryPageQuery query) {
+    @PostMapping("/query")
+    Result<PageResult<WikiEntryBO>> queryWikiEntry(@RequestBody WikiEntryPageQuery query) {
         return Result.success(wikiEntryService.queryWikiEntry(query));
     }
 
@@ -39,9 +44,20 @@ public class WikiEntryController {
     }
 
     @PostMapping("/{id}/versions")
-    Result<Boolean> submitNewEntryVersion(WikiEntryForm form) {
+    Result<Boolean> submitNewEntryVersion(@RequestBody WikiEntryForm form) {
         return Result.success(wikiEntryService.submitNewEntryVersion(form));
     }
+
+    @GetMapping("/{id}/versions")
+    Result<List<WikiEntryVersion>> queryWikiEntryVersion(@PathVariable Long id) {
+        return Result.success(wikiEntryService.queryWikiEntryVersion(id));
+    }
+
+    @GetMapping("/{id}/versions/{versionNumber}")
+    Result<WikiEntryDetailDTO> getWikiEntryWithVersion(@PathVariable Long id, @PathVariable Integer versionNumber) {
+        return Result.success(wikiEntryService.getWikiEntryWithVersion(id, versionNumber));
+    }
+
 
 
 
