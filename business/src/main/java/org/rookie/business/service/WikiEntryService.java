@@ -27,4 +27,6 @@ public interface WikiEntryService {
 
     WikiEntryDetailDTO getWikiEntryWithVersion(Long id, Integer versionNumber);
 
+    Boolean forceDeleteWikiEntry(Long id);
+
 }

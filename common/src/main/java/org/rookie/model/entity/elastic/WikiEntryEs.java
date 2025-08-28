@@ -5,6 +5,11 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 public class WikiEntryEs {
 
@@ -35,22 +40,20 @@ public class WikiEntryEs {
     @JsonProperty("created_by")
     private Long createdBy;
 
+    // 注意：created_at 在 JSON 中是时间戳（Long），所以这里要用 Long
     @JsonProperty("created_at")
-    private LocalDateTime createdAt;
+    private Long createdAt;
 
     @JsonProperty("updated_at")
-    private LocalDateTime updatedAt;
+    private Long updatedAt;
 
     @JsonProperty("updated_by")
     private Long updatedBy;
 
+    // 注意：is_deleted 在 JSON 中是 0 或 1（Integer），所以这里要用 Integer
     @JsonProperty("is_deleted")
-    private Boolean isDeleted;
+    private Integer isDeleted;
 
-    /**
-     * Elasticsearch 中的标签字段，
-     * 对应 Elasticsearch 中的 `keyword` 数组类型。
-     */
     @JsonProperty("tags")
     private List<String> tags;
 }

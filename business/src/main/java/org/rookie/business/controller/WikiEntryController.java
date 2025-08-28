@@ -35,7 +35,7 @@ public class WikiEntryController {
 
         return Result.success(entry);
     }
-    @GetMapping
+    @GetMapping("")
     public Result<PageResult<WikiEntryBO>> queryWikiEntry(WikiEntryPageQuery query){
         PageResult<WikiEntryBO> pageResult = wikiEntryService.queryWikiEntry(query);
 
@@ -61,10 +61,11 @@ public class WikiEntryController {
 
     @SaCheckPermission("wiki_entry:update")
     @PostMapping("/{id}/versions")
-    public Result<Boolean> submitNewEntryVersion( @RequestBody WikiEntryForm form) {
+    public Result<Boolean> submitNewEntryVersion(@PathVariable Long id,WikiEntryForm form) {
 
         long uid = Long.parseLong(StpUtil.getLoginId().toString());
         form.setUpdatedBy(uid);
+        form.setId(id);
 
         Boolean result = wikiEntryService.submitNewEntryVersion(form);
         if(result){
@@ -80,12 +81,22 @@ public class WikiEntryController {
         return Result.success(versions);
     }
 
-    @GetMapping("/{id}/verisons/{versionNumber}")
+    @GetMapping("/{id}/versions/{versionNumber}")
     public Result<WikiEntryDetailDTO> getWikiEntryWithVersion(
             @PathVariable("id") Long id,
             @PathVariable("versionNumber") Integer versionNumber) {
         WikiEntryDetailDTO detailDTO = wikiEntryService.getWikiEntryWithVersion(id, versionNumber);
         return Result.success(detailDTO);
+    }
+
+    @DeleteMapping("/{id}/force")
+    public Result<Boolean> forceDeleteWikiEntry(@PathVariable("id") Long id) {
+        Boolean result = wikiEntryService.forceDeleteWikiEntry(id);
+        if(result){
+            return Result.success();
+        }else{
+            return Result.failed("删除失败");
+        }
     }
 
 

@@ -5,19 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.rookie.model.entity.database.Tag;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class WikiEntryBO {
+    Long id;
     String title;
     String slug;
     String content;//部份
     String coverImageUrl;
     String status;
     Long viewCount;
-    String createAt;
-    String updateAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     List<String>tags;
 

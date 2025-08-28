@@ -1,5 +1,6 @@
 package org.rookie.business.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import lombok.extern.slf4j.Slf4j;
 import org.rookie.consts.Result;
 import org.rookie.exception.BusinessException;
@@ -78,6 +79,11 @@ public class GlobalExceptionHandler {
         return Result.failed(HttpStatus.BAD_REQUEST, "缺少必要的请求头: " + e.getHeaderName());
     }
 
+    @ExceptionHandler(NotLoginException.class)
+    public Result<String> handleNotLoginException(NotLoginException e) {
+        return Result.failed(HttpStatus.UNAUTHORIZED, "用户未登录");
+    }
+
     /**
      * 处理所有未被其他处理器捕获的异常
      */
@@ -86,5 +92,6 @@ public class GlobalExceptionHandler {
         log.error("未预期的异常: ", e);
         return Result.failed(HttpStatus.INTERNAL_SERVER_ERROR, "系统繁忙，请稍后重试");
     }
-    
+
+
 }

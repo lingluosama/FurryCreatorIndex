@@ -1,10 +1,10 @@
 {
-  "name": "wiki-es-sink-connector",
+  "name": "wiki-es-sink-connector-v3",
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "tasks.max": "1",
-    "topics": "your_topic_name",
-    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "topics": "mysql-wiki-v3.testdb.artist,mysql-wiki-v3.testdb.artwork,mysql-wiki-v3.testdb.creator,mysql-wiki-v3.testdb.game,mysql-wiki-v3.testdb.literature_work,mysql-wiki-v3.testdb.media_work,mysql-wiki-v3.testdb.wiki_entry",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
     "value.converter.schemas.enable": "false",
@@ -12,6 +12,12 @@
     "type.name": "_doc",
     "key.ignore": "false",
     "schema.ignore": "true",
-    "index.prefix": "debezium"
+    "behavior.on.null.values": "delete",
+    "drop.invalid.message": "true",
+    "index.prefix": "debezium-v3",
+    "errors.tolerance": "all",
+    "errors.deadletterqueue.topic.name": "wiki-es-sink-connector-v3-dlq",
+    "errors.deadletterqueue.context.headers.enable": "true",
+    "errors.deadletterqueue.topic.replication.factor": "1"
   }
 }

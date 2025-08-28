@@ -1,5 +1,5 @@
 {
-  "name": "wiki-mysql-connector",
+  "name": "wiki-mysql-connector-v3",
   "config": {
     "connector.class": "io.debezium.connector.mysql.MySqlConnector",
     "tasks.max": "1",
@@ -7,13 +7,13 @@
     "database.port": "3306",
     "database.user": "root",
     "database.password": "12345",
-    "database.server.id": "114514",
-    "database.server.name": "mysql-wiki",
+    "database.server.id": "114515",
+    "database.server.name": "mysql-wiki-v3",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-    "schema.history.internal.kafka.topic": "schema-history.wiki",
+    "schema.history.internal.kafka.topic": "schema-history.wiki-v3",
     "include.schema.changes": "false",
-    "table.include.list": "testdb.artist,testdb.art_work,testdb.creator,testdb.game,testdb.literature_work,testdb.media_work,testdb.wiki_entry",
-    "topic.prefix": "mysql-wiki",
+    "table.include.list": "testdb.artist,testdb.artwork,testdb.creator,testdb.game,testdb.literature_work,testdb.media_work,testdb.wiki_entry",
+    "topic.prefix": "mysql-wiki-v3",
     "topic.creation.enabled": "true",
     "topic.creation.default.replication.factor": "1",
     "topic.creation.default.partitions": "1"

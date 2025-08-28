@@ -42,7 +42,7 @@ public class WikiEntryTableDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, SLUG, TITLE, STATUS, CONTENT, CREATED_AT, CREATED_BY, UPDATED_AT, UPDATED_BY, VIEW_COUNT, CATEGORY_ID, COVER_IMAGE_URL};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, SLUG, TITLE, STATUS, CONTENT, CREATED_AT, CREATED_BY, IS_DELETED, UPDATED_AT, UPDATED_BY, VIEW_COUNT, CATEGORY_ID, COVER_IMAGE_URL};
 
     public WikiEntryTableDef() {
         super("", "wiki_entry");

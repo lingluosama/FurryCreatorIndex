@@ -4,7 +4,9 @@ package org.rookie.model.dto;
 import io.micrometer.core.instrument.Tags;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.rookie.model.entity.database.Tag;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -17,8 +19,8 @@ public class WikiEntryDetailDTO {
     String coverImageUrl;
     String status;
     Long viewCount;
-    String createAt;
-    String updateAt;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 
     String category;
     String creator;//上传用户名
@@ -28,6 +30,6 @@ public class WikiEntryDetailDTO {
     String updater;//更新用户名
     String updaterId;
     String updaterAvatarUrl;
-    List<Tags> tags;
+    List<Tag> tags;
     String comment;//版本修改说明
 }

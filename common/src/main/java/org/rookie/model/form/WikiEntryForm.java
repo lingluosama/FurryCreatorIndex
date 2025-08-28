@@ -14,7 +14,7 @@ public class WikiEntryForm {
 
     String title;
 
-    String slug;//条目页面对外访问地址
+    String slug;//条目页面对外访问地址,唯一
 
     String categoryId;
 
@@ -32,4 +32,6 @@ public class WikiEntryForm {
     Long createdBy;
 
     Long updatedBy;
+
+    String comment;//用于版本更新描述
 }

@@ -212,7 +212,8 @@ create table report
     status      varchar(50) default 'PENDING'         not null comment '举报处理状态: PENDING, REVIEWED, RESOLVED',
     handled_by  bigint                                null comment '处理者用户ID',
     handled_at  datetime                              null comment '处理时间',
-    created_at  datetime    default CURRENT_TIMESTAMP not null comment '举报时间'
+    created_at  datetime    default CURRENT_TIMESTAMP not null comment '举报时间',
+    reply       text                                  null
 )
     comment '举报表';
 
@@ -357,3 +358,19 @@ create table wiki_entry_version
     primary key (wiki_entry_id, version_number)
 )
     comment '维基条目版本表';
+
+INSERT INTO testdb.permission (id, code, description, created_at) VALUES (1, 'root', '跳过权限检查', '2025-08-08 16:34:53');
+INSERT INTO testdb.permission (id, code, description, created_at) VALUES (2, 'user:control', '用户管理权限', '2025-08-08 16:35:08');
+INSERT INTO testdb.permission (id, code, description, created_at) VALUES (3, 'wiki_entry:update', 'wiki页面更新权限', '2025-08-08 17:12:57');
+INSERT INTO testdb.permission (id, code, description, created_at) VALUES (4, 'wiki_entry:create', 'wiki页面创建权限', '2025-08-26 17:21:33');
+
+INSERT INTO testdb.role (id, name, description, created_at) VALUES (1, 'system_owner', '系统所有者', '2025-08-08 16:45:00');
+INSERT INTO testdb.role (id, name, description, created_at) VALUES (2, 'admin', '管理员', '2025-08-08 17:08:52');
+INSERT INTO testdb.role (id, name, description, created_at) VALUES (3, 'user', '普通用户', '2025-08-08 17:09:07');
+
+INSERT INTO testdb.role_permission (role_id, permission_id) VALUES (1, 1);
+INSERT INTO testdb.role_permission (role_id, permission_id) VALUES (1, 2);
+INSERT INTO testdb.role_permission (role_id, permission_id) VALUES (2, 2);
+INSERT INTO testdb.role_permission (role_id, permission_id) VALUES (2, 3);
+INSERT INTO testdb.role_permission (role_id, permission_id) VALUES (3, 3);
+INSERT INTO testdb.role_permission (role_id, permission_id) VALUES (2, 4);

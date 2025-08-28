@@ -23,7 +23,7 @@ public class WikiEntryController {
 
     private final IWikiEntryService wikiEntryService;
 
-    @PostMapping
+    @PostMapping("")
     Result<WikiEntry> createWikiEntry(@RequestBody WikiEntryForm form) {
         return Result.success(wikiEntryService.createWikiEntry(form));
     }
@@ -56,6 +56,11 @@ public class WikiEntryController {
     @GetMapping("/{id}/versions/{versionNumber}")
     Result<WikiEntryDetailDTO> getWikiEntryWithVersion(@PathVariable Long id, @PathVariable Integer versionNumber) {
         return Result.success(wikiEntryService.getWikiEntryWithVersion(id, versionNumber));
+    }
+
+    @DeleteMapping("/{id}/force")
+    Result<Boolean> forceDeleteWikiEntry(@PathVariable Long id) {
+           return Result.success(wikiEntryService.forceDeleteWikiEntry(id));
     }
 
 

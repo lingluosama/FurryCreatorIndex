@@ -8,17 +8,24 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.rookie.data.converter.WikiEntryConverter;
+import org.rookie.data.mapper.EntityTagMapper;
 import org.rookie.data.mapper.WikiEntryMapper;
 import org.rookie.data.mapper.WikiEntryVersionMapper;
 import org.rookie.data.service.IWikiEntryService;
+import org.rookie.data.service.TagCommentService;
+import org.rookie.data.utils.EsRespHandler;
 import org.rookie.exception.BusinessException;
 import org.rookie.model.bo.WikiEntryBO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
+import org.rookie.model.entity.database.EntityTag;
+import org.rookie.model.entity.database.Tag;
 import org.rookie.model.entity.database.WikiEntry;
 import org.rookie.model.entity.database.WikiEntryVersion;
+import org.rookie.model.entity.database.table.EntityTagTableDef;
 import org.rookie.model.entity.database.table.WikiEntryVersionTableDef;
 import org.rookie.model.entity.elastic.WikiEntryEs;
 import org.rookie.model.form.WikiEntryForm;
@@ -26,8 +33,12 @@ import org.rookie.model.query.WikiEntryPageQuery;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry> implements IWikiEntryService {
@@ -37,6 +48,12 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
     private final WikiEntryVersionMapper versionMapper;
 
     private final ElasticsearchClient esClient;
+
+    private final EsRespHandler esRespHandler;
+
+    private final EntityTagMapper entityTagMapper;
+
+    private final TagCommentService tagCommentService;
 
     @Override
     public WikiEntry createWikiEntry(WikiEntryForm form) {
@@ -60,40 +77,36 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
 
     @Override
     public PageResult<WikiEntryBO> queryWikiEntry(WikiEntryPageQuery query) {
-        int from=(query.getPageNumber()-1)-query.getPageSize();
-        int size=query.getPageSize();
+        int from = (query.getPageNumber() - 1) * query.getPageSize();
+        int size = query.getPageSize();
 
         SearchRequest request = SearchRequest.of(s -> s
-                .index("debezium.testdb.wiki_entry")
+                .index("mysql-wiki-v3.testdb.wiki_entry")
                 .from(from)
                 .size(size)
-                .query(q->q.bool(b->{
-                    b.must(m->m.multiMatch(mm->
-                            mm.query(query.getKeyword())
-                                    .fields("title","content")
+                .query(q -> q.bool(b -> {
+                    b.must(m -> m.multiMatch(mm ->
+                            mm.query(query.getKeyword()).fields("after.title", "after.content")
                     ));
-
-                    if(query.getCategoryId()!=null){
-                        b.filter(f->f.term(t->t.field("category_id")
-                                .value(String.valueOf(query.getCategoryId()))));
+                    if (query.getCategoryId() != null) {
+                        b.filter(f -> f.term(t -> t.field("after.category_id").value(String.valueOf(query.getCategoryId()))));
                     }
                     return b;
                 }))
         );
 
         try {
-            SearchResponse<WikiEntryEs> response = esClient.search(request, WikiEntryEs.class);
-            List<WikiEntryEs> wikiEntryEs = response.hits().hits().stream().map(Hit::source).toList();
-            List<WikiEntryBO> list = converter.toBOList(wikiEntryEs);
+            SearchResponse<Map> response = esClient.search(request, Map.class);
+            List<WikiEntryEs> wikiEntryEs = esRespHandler.extractHistFromAfterFiled(response, WikiEntryEs.class);
+            long hits = esRespHandler.getTotalHits(response);
+            List<WikiEntryBO> entryBOS = converter.toBOList(wikiEntryEs);
+            return new PageResult<>(hits,entryBOS);
 
-            PageResult<WikiEntryBO> pageResult = new PageResult<>();
-            if (response.hits().total() != null) {
-                pageResult.setTotal(response.hits().total().value());
-            }
-            pageResult.setRecords(list);
-            return pageResult;
-        }catch (IOException e){
-            throw new BusinessException(HttpStatus.SC_BAD_REQUEST,"查询条目失败",e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }catch (Exception e){
+            log .error("查询条目异常",e);
+            return new PageResult<>();
         }
 
     }
@@ -101,19 +114,30 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
     @Override
     public WikiEntryDetailDTO getWikiEntryById(Long id) {
         WikiEntry wikiEntry = this.getMapper().selectOneWithRelationsById(id);
-        return converter.toDetailDTO(wikiEntry);
+        List<Tag> tags = tagCommentService.getTagsByEntityId(id, "wiki_entry");
+        WikiEntryDetailDTO dto = converter.toDetailDTO(wikiEntry);
+        dto.setTags(tags);
+        WikiEntryVersion latestVersion = QueryChain.of(versionMapper).select(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.COMMENT)
+                .where(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.WIKI_ENTRY_ID.eq(id))
+                .orderBy(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.VERSION_NUMBER.desc())
+                .one();
+        dto.setComment(latestVersion.getComment());
+        return dto;
     }
 
     @Override
     public Boolean deleteWikiEntry(Long id) {
-        return this.removeById(id);
+        WikiEntry entry = new WikiEntry();
+        entry.setId(id);
+        entry.setIsDeleted(true);
+        return this.updateById(entry);
     }
 
     @Override
     public Boolean submitNewEntryVersion(WikiEntryForm form) {
         WikiEntry entity = converter.toEntity(form);
         WikiEntryVersion versionEntity = converter.toVersionEntity(entity);
-
+        versionEntity.setComment(form.getComment() );
         WikiEntryVersion oldVersion = QueryChain.of(versionMapper)
                 .where(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.WIKI_ENTRY_ID.eq(form.getId()))
                 .orderBy(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.VERSION_NUMBER.asc(),
@@ -153,5 +177,12 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
                         )
                 .where(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.WIKI_ENTRY_ID.eq(id))
                 .list();
+    }
+
+    @Override
+    public Boolean forceDeleteWikiEntry(Long id) {
+        versionMapper.deleteByCondition(WikiEntryVersionTableDef.WIKI_ENTRY_VERSION.WIKI_ENTRY_ID.eq(id));
+        entityTagMapper.deleteByCondition(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(id));
+        return this.removeById(id);
     }
 }

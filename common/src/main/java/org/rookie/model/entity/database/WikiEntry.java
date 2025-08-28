@@ -38,15 +38,16 @@ public class WikiEntry implements Serializable {
 
     private Long updatedBy;
 
-    @Column(isLogicDelete = true) // 逻辑删除字段
     private Boolean isDeleted;
 
-    @RelationOneToOne(selfField = "createBy",targetField = "id",targetTable = "user",selectColumns ={"nickname","avatar_url"})
+    @RelationOneToOne(selfField = "createdBy", targetField = "id", targetTable = "user", selectColumns ={"nickname","avatar_url"})
     private User creator;
 
-    @RelationOneToOne(selfField = "updateBy",targetTable = "id",targetField = "user",selectColumns ={"nickname","avatar_url"})
+    // 修正后的配置
+    @RelationOneToOne(selfField = "updatedBy", targetField = "id", targetTable = "user", selectColumns ={"nickname","avatar_url"})
     private User updater;
 
-    @RelationOneToOne(selfField = "categoryId",targetField = "id",targetTable = "wiki_category",selectColumns ={"name"})
+    @RelationOneToOne(selfField = "categoryId", targetField = "id", targetTable = "wiki_category", selectColumns ={"name"})
     private WikiCategory category;
+
 }

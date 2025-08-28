@@ -27,4 +27,6 @@ public interface IWikiEntryService extends IService<WikiEntry> {
 
     List<WikiEntryVersion> queryWikiEntryVersion(Long id);
 
+    Boolean forceDeleteWikiEntry(Long id);
+    
 }

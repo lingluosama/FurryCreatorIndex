@@ -2,6 +2,7 @@ package org.rookie.business.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.rookie.business.feign.WikiEntryFeignClient;
 import org.rookie.business.service.WikiEntryService;
 import org.rookie.consts.Result;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WikiEntryServiceImpl implements WikiEntryService {
@@ -32,6 +34,7 @@ public class WikiEntryServiceImpl implements WikiEntryService {
 
     @Override
     public PageResult<WikiEntryBO> queryWikiEntry(WikiEntryPageQuery query) {
+
         Result<PageResult<WikiEntryBO>> result = wikiEntryFeignClient.queryWikiEntry(query);
         return result.getData();
     }
@@ -53,7 +56,7 @@ public class WikiEntryServiceImpl implements WikiEntryService {
     public Boolean submitNewEntryVersion(WikiEntryForm form) {
         long uid = Long.parseLong(StpUtil.getLoginId().toString());
         form.setCreatedBy(uid);
-        Result<Boolean> result = wikiEntryFeignClient.submitNewEntryVersion(form);
+        Result<Boolean> result = wikiEntryFeignClient.submitNewEntryVersion(form.getId(),form);
         return result.getData();
     }
 
@@ -66,6 +69,12 @@ public class WikiEntryServiceImpl implements WikiEntryService {
     @Override
     public WikiEntryDetailDTO getWikiEntryWithVersion(Long id, Integer versionNumber) {
         Result<WikiEntryDetailDTO> result = wikiEntryFeignClient.getWikiEntryWithVersion(id, versionNumber);
+        return result.getData();
+    }
+
+    @Override
+    public Boolean forceDeleteWikiEntry(Long id) {
+        Result<Boolean> result = wikiEntryFeignClient.forceDeleteWikiEntry(id);
         return result.getData();
     }
 }

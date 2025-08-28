@@ -1,5 +1,6 @@
 package org.rookie.business.feign;
 
+import org.apache.ibatis.annotations.Delete;
 import org.rookie.business.config.FeignConfig;
 import org.rookie.consts.Result;
 import org.rookie.model.bo.WikiEntryBO;
@@ -14,36 +15,39 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "data-service", path = "/data/wiki-entries", configuration = FeignConfig.class)
+@FeignClient(name = "data-service", path = "/data", configuration = FeignConfig.class)
 public interface WikiEntryFeignClient {
 
-    @PostMapping("")
+    @PostMapping("/wiki-entries")
     Result<WikiEntry> createWikiEntry(@RequestBody WikiEntryForm form);
 
-    @PostMapping("/query")
+    @RequestMapping(value = "/wiki-entries/query",method = RequestMethod.POST)
     Result<PageResult<WikiEntryBO>> queryWikiEntry(@RequestBody WikiEntryPageQuery query);
 
-    @GetMapping("/{id}")
+    @GetMapping("/wiki-entries/{id}")
     Result<WikiEntryDetailDTO> getWikiEntryById(@PathVariable("id") Long id);
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/wiki-entries/{id}")
     Result<Boolean> deleteWikiEntry(@PathVariable("id") Long id);
 
 
-    @PostMapping("/{id}/versions")
-    Result<Boolean> submitNewEntryVersion( @RequestBody WikiEntryForm form);
+    @PostMapping("/wiki-entries/{id}/versions")
+    Result<Boolean> submitNewEntryVersion(@PathVariable("id") Long id, @RequestBody WikiEntryForm form);
 
-    @GetMapping("/{id}/versions")
+    @GetMapping("/wiki-entries/{id}/versions")
     Result<List<WikiEntryVersion>> queryWikiEntryVersion(@PathVariable("id") Long id);
 
-    @GetMapping("/{id}/versions/{versionNumber}")
+    @GetMapping("/wiki-entries/{id}/versions/{versionNumber}")
     Result<WikiEntryDetailDTO> getWikiEntryWithVersion(
             @PathVariable("id") Long id,
             @PathVariable("versionNumber") Integer versionNumber);
 
-    @PutMapping("/{id}/versions/{versionNumber}")
+    @PutMapping("/wiki-entries/{id}/versions/{versionNumber}")
     Result<Boolean> publishWikiEntryVersion(
             @PathVariable("id") Long id,
             @PathVariable("versionNumber") Integer versionNumber);
+
+    @DeleteMapping("/wiki-entries/{id}/force")
+    Result<Boolean> forceDeleteWikiEntry(@PathVariable("id") Long id);
 
 }

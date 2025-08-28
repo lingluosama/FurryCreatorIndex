@@ -189,6 +189,14 @@ services:
       CONFIG_STORAGE_TOPIC: my_connect_configs
       OFFSET_STORAGE_TOPIC: my_connect_offsets
       STATUS_STORAGE_TOPIC: my_connect_statuses
+      CONNECT_TRANSFORMS: 'unwrap'
+      CONNECT_TRANSFORMS_UNWRAP_TYPE: 'io.debezium.transforms.ExtractNewRecordState'
+      CONNECT_TRANSFORMS_UNWRAP_ADD_FIELDS: 'op,ts_ms,db,table'
+      CONNECT_TRANSFORMS_UNWRAP_DROP_TOMBSTONES: 'true'
+      CONNECT_KEY_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: 'false'
+      CONNECT_VALUE_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: 'false'
       # ... 其他配置
     networks:
       - micro-net
