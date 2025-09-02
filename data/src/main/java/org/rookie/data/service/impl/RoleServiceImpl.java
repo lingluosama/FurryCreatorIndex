@@ -1,15 +1,19 @@
 package org.rookie.data.service.impl;
 
+import cn.hutool.core.lang.Pair;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.rookie.consts.RedisKeys;
+import org.rookie.data.converter.RoleConverter;
 import org.rookie.data.mapper.PermissionMapper;
 import org.rookie.data.mapper.RoleMapper;
 import org.rookie.data.mapper.RolePermissionMapper;
 import org.rookie.data.mapper.UserRoleMapper;
+import org.rookie.data.service.IPermissionService;
 import org.rookie.data.service.IRoleService;
+import org.rookie.data.utils.DataUtils;
 import org.rookie.model.bo.RolePermissionBO;
 import org.rookie.model.dto.RolePermissionSearchDTO;
 import org.rookie.model.entity.database.Permission;
@@ -20,6 +24,7 @@ import org.rookie.model.entity.database.table.PermissionTableDef;
 import org.rookie.model.entity.database.table.RolePermissionTableDef;
 import org.rookie.model.entity.database.table.RoleTableDef;
 import org.rookie.model.entity.database.table.UserRoleTableDef;
+import org.rookie.model.form.RoleForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.rookie.model.entity.database.table.PermissionTableDef.PERMISSION;
@@ -40,9 +46,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     private static final Logger log = LoggerFactory.getLogger(RoleServiceImpl.class);
     private final UserRoleMapper userRoleMapper;
     private final RolePermissionMapper rolePermissionMapper;
-    private final PermissionMapper permissionMapper;
+    private final IPermissionService permissionService;
     private final RedisTemplate<String,Object> redisTemplate;
-    
+    private final RoleConverter converter;
+
     
     @Override
     public List<String> getUserRoles(Long uid) {
@@ -106,7 +113,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Override
     public List<Permission> getRolePermissions(Long roleId) {
-        return QueryChain.of(permissionMapper)
+        return QueryChain.of(permissionService.getMapper())
                 .where(PERMISSION.ID.in(//把中间表进行嵌套查询
                         QueryChain.of(rolePermissionMapper)
                                 .from(ROLE_PERMISSION)
@@ -157,5 +164,41 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public Boolean addRoleForUser(Long uid, Long roleId) {
         int row = userRoleMapper.insert(new UserRole(uid, roleId));
         return row>0;
+    }
+
+    @Override
+    public Boolean createRole(RoleForm form) {
+        Role role = converter.formToRole(form);
+        int inserted = rolePermissionMapper.insertBatch(form.getPermissionIds()
+                .stream()
+                .map(permissionId -> new RolePermission(role.getId(), permissionId)).toList());
+
+        if(form.getPermissionIds().size()==inserted){
+            List<Permission> permissions = permissionService.listByIds(form.getPermissionIds());
+            List<String> permissionCodes = permissions.stream().map(Permission::getCode).toList();
+            redisTemplate.opsForSet().add(RedisKeys.ROLE_PERMISSION_KEY_PREFIX + role.getName(), permissionCodes.toArray(new String[0]));
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    @Override
+    public Boolean updateUserRole(List<Long> roleIds, Long userId) {
+        List<Long> oldRoles = QueryChain.of(userRoleMapper)
+                .select(UserRoleTableDef.USER_ROLE.ROLE_ID)
+                .where(UserRoleTableDef.USER_ROLE.USER_ID.eq(userId))
+                .list().stream()
+                .map(UserRole::getRoleId).toList();
+        Pair<Set<Long>, Set<Long>> setPair = DataUtils.getSetAdd(oldRoles, roleIds);
+        Set<Long> toDelete = setPair.getKey();
+        Set<Long> toAdd = setPair.getValue();
+        int deleted = userRoleMapper.deleteByCondition(UserRoleTableDef.USER_ROLE.USER_ID.eq(userId)
+                .and(UserRoleTableDef.USER_ROLE.ROLE_ID.in(toDelete)));
+        int inserted = userRoleMapper.insertBatch(toAdd.stream().map(roleId -> new UserRole(userId, roleId)).toList());
+
+
+        return deleted==toDelete.size() && inserted==toAdd.size();
     }
 }

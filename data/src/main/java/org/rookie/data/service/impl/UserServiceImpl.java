@@ -47,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public User queryByid(Long id) {
+    public User queryById(Long id) {
         User user = queryChain().where(UserTableDef.USER.ID.eq(id)).one();
         if(user ==null){
             throw BusinessExceptionEnum.NOT_FIND_IN_DATABASE.exception();

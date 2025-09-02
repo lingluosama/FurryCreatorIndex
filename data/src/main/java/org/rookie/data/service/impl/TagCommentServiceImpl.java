@@ -1,6 +1,7 @@
 package org.rookie.data.service.impl;
 
 
+import cn.hutool.core.lang.Pair;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.Result;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
@@ -17,6 +18,7 @@ import org.rookie.data.mapper.CommentMapper;
 import org.rookie.data.mapper.EntityTagMapper;
 import org.rookie.data.mapper.TagMapper;
 import org.rookie.data.service.TagCommentService;
+import org.rookie.data.utils.DataUtils;
 import org.rookie.exception.BusinessException;
 import org.rookie.model.bo.CommentBO;
 import org.rookie.model.dto.PageResult;
@@ -89,14 +91,9 @@ public class TagCommentServiceImpl implements TagCommentService {
                 .where(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(form.getEntityId()))
                 .list().stream().map(EntityTag::getTagId).toList();
 
-        Set<Long> oldSet=new HashSet<>(oldTagIds);
-        Set<Long> newSet=new HashSet<>(form.getTagIds());
-
-        Set<Long> toDelete=new HashSet<>(oldSet);
-        toDelete.removeAll(newSet);
-
-        Set<Long> toAdd=new HashSet<>(form.getTagIds());
-        toAdd.removeAll(oldSet);
+        Pair<Set<Long>, Set<Long>> setPair = DataUtils.getSetAdd(oldTagIds, form.getTagIds());
+        Set<Long> toDelete = setPair.getKey();
+        Set<Long> toAdd = setPair.getValue();
 
 
         if(!toDelete.isEmpty())entityTagMapper.deleteByCondition(

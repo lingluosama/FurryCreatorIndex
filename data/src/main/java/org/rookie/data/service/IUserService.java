@@ -22,10 +22,11 @@ public interface IUserService extends IService<User>{
     List<User> SearchUser(String keyword, Integer offset, Integer limit);
 
     @RedisCache(key = "UserTable:%s",expire = 168)
-    User queryByid(Long id);
+    User queryById(Long id);
 
 
     @CacheDbSync
     User updateUser(User user);
-    
+
+
 }
