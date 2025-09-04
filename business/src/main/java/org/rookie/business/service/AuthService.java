@@ -2,6 +2,7 @@ package org.rookie.business.service;
 
 import org.rookie.model.dto.AuthDTO;
 import org.rookie.model.dto.PageResult;
+import org.rookie.model.dto.RolePermissionSearchDTO;
 import org.rookie.model.entity.database.Permission;
 import org.rookie.model.entity.database.Role;
 import org.rookie.model.form.RoleForm;
@@ -18,22 +19,20 @@ public interface AuthService {
 
     AuthDTO userLogin(UserLoginForm form);
 
-    Boolean createRole(RoleForm form);
+    Void createRole(RoleForm form);
 
-    PageResult<Role> queryRole(RolePageQuery query);
+    RolePermissionSearchDTO queryRole(RolePageQuery query);
 
-    Long deleteRole(Long roleId);
+    Void deleteRole(Long roleId);
 
-    Boolean updateRolePermission(List<Long> permissionIds, Long roleId);
+    Void updateRolePermission(List<Long> permissionIds, Long roleId);
 
-    Boolean updateUserRole(List<Long>roleIds,Long userId);
+    Void updateUserRole(List<Long>roleIds,Long userId);
 
-    Boolean removeUserRole(Long userId);
-
-    Boolean createPermission(RoleForm form);
+    Void createPermission(RoleForm form);
 
     PageResult<Permission> searchPermission(PermissionQuery query);
 
-    Boolean deletePermission(Long permissionId);
+    Void deletePermission(Long permissionId);
 
 }
