@@ -42,5 +42,8 @@ public interface WikiEntryConverter {
 
     @Mapping(target = "wikiEntryId",source = "id")
     WikiEntryVersion toVersionEntity(WikiEntry entity);
+    
+    @Mapping(target = "id",source = "wikiEntryId")
+    WikiEntryForm versionToForm(WikiEntryVersion entity);
 
 }

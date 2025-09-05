@@ -1,6 +1,7 @@
 package org.rookie.business.service;
 
 import org.rookie.model.bo.WikiEntryBO;
+import org.rookie.model.dto.DraftSubmitConflictDTO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
 import org.rookie.model.entity.database.WikiEntry;
@@ -9,6 +10,7 @@ import org.rookie.model.form.WikiEntryForm;
 import org.rookie.model.query.WikiEntryPageQuery;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface WikiEntryService {
 
@@ -28,5 +30,9 @@ public interface WikiEntryService {
     WikiEntryDetailDTO getWikiEntryWithVersion(Long id, Integer versionNumber);
 
     Boolean forceDeleteWikiEntry(Long id);
+        
+    CompletableFuture<Boolean> autoSaveDraft(Long id, WikiEntryForm form);
+    
+    DraftSubmitConflictDTO<WikiEntryDetailDTO> submitDraftAsNewVersion(Long draftId);
 
 }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.rookie.business.service.WikiEntryService;
 import org.rookie.consts.Result;
 import org.rookie.model.bo.WikiEntryBO;
+import org.rookie.model.dto.DraftSubmitConflictDTO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
 import org.rookie.model.entity.database.WikiEntry;
@@ -18,6 +19,7 @@ import org.rookie.model.query.WikiEntryPageQuery;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/wiki-entries")
@@ -97,6 +99,22 @@ public class WikiEntryController {
         }else{
             return Result.failed("删除失败");
         }
+    }
+    
+    @SaCheckLogin
+    @PostMapping("/{id}/draft/autoSave")
+    public Result<Boolean> autoSaveDraft(@PathVariable("id") Long id, @RequestBody WikiEntryForm form) { 
+        form.setId(id);
+        long uid = Long.parseLong(StpUtil.getLoginId().toString());
+        form.setUpdatedBy(uid);
+        CompletableFuture<Boolean> future = wikiEntryService.autoSaveDraft(id, form);
+        return Result.success(future.join());
+    }
+    
+    @PostMapping("/{id}/draft/draft-submit")
+    public Result<DraftSubmitConflictDTO<WikiEntryDetailDTO>> submitDraft(@PathVariable("id")Long draftId){
+        DraftSubmitConflictDTO<WikiEntryDetailDTO> dto = wikiEntryService.submitDraftAsNewVersion(draftId);
+        return Result.success(dto);
     }
 
 

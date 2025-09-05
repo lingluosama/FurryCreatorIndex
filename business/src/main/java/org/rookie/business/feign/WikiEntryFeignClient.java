@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.rookie.business.config.FeignConfig;
 import org.rookie.consts.Result;
 import org.rookie.model.bo.WikiEntryBO;
+import org.rookie.model.dto.DraftSubmitConflictDTO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
 import org.rookie.model.entity.database.WikiEntry;
@@ -49,5 +50,9 @@ public interface WikiEntryFeignClient {
 
     @DeleteMapping("/wiki-entries/{id}/force")
     Result<Boolean> forceDeleteWikiEntry(@PathVariable("id") Long id);
+    
+    @PostMapping("/wiki-entries/{draftId}/draft-submit")
+    Result<DraftSubmitConflictDTO<WikiEntryDetailDTO>> submitDraftAsNewVersion(
+            @PathVariable("draftId") Long draftId);
 
 }

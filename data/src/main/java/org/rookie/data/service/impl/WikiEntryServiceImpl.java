@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.alibaba.fastjson2.JSON;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
@@ -11,20 +12,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.rookie.data.converter.WikiEntryConverter;
+import org.rookie.data.mapper.DraftMapper;
 import org.rookie.data.mapper.EntityTagMapper;
 import org.rookie.data.mapper.WikiEntryMapper;
 import org.rookie.data.mapper.WikiEntryVersionMapper;
+import org.rookie.data.service.IDraftService;
 import org.rookie.data.service.IWikiEntryService;
 import org.rookie.data.service.TagCommentService;
 import org.rookie.data.utils.EsRespHandler;
 import org.rookie.exception.BusinessException;
 import org.rookie.model.bo.WikiEntryBO;
+import org.rookie.model.dto.DraftSubmitConflictDTO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
-import org.rookie.model.entity.database.EntityTag;
-import org.rookie.model.entity.database.Tag;
-import org.rookie.model.entity.database.WikiEntry;
-import org.rookie.model.entity.database.WikiEntryVersion;
+import org.rookie.model.entity.database.*;
 import org.rookie.model.entity.database.table.EntityTagTableDef;
 import org.rookie.model.entity.database.table.WikiEntryVersionTableDef;
 import org.rookie.model.entity.elastic.WikiEntryEs;
@@ -54,7 +55,9 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
     private final EntityTagMapper entityTagMapper;
 
     private final TagCommentService tagCommentService;
-
+    
+    private final IDraftService draftService;
+    
     @Override
     public WikiEntry createWikiEntry(WikiEntryForm form) {
 
@@ -185,4 +188,29 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
         entityTagMapper.deleteByCondition(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(id));
         return this.removeById(id);
     }
+
+    @Override
+    public DraftSubmitConflictDTO<WikiEntryDetailDTO> submitDraftAsNewVersion(Long draftId) {
+        DraftSubmitConflictDTO<WikiEntryDetailDTO> dto = new DraftSubmitConflictDTO<>();
+
+        Draft draft = draftService.getById(draftId);
+        WikiEntryVersion draftVersion = JSON.parseObject(draft.getData(), WikiEntryVersion.class);
+        WikiEntryDetailDTO dbVersion = this.getWikiEntryById(draft.getEntityId());
+        
+        //当内容不同且草稿创建时间在当前提价版本之前时，返回冲突的响应
+        if(!draftVersion.getContent().equals(dbVersion.getContent())
+                &&dbVersion.getUpdatedAt().isAfter(draftVersion.getCreatedAt())){
+            dto.setCurrentVersion(dbVersion);
+            dbVersion.setContent(draftVersion.getContent());
+            dbVersion.setUpdatedAt(draftVersion.getCreatedAt());
+            dto.setCurrentVersion(dbVersion);
+            return dto;
+        }else{
+            WikiEntryForm form = converter.versionToForm(draftVersion);
+            this.submitNewEntryVersion(form);
+            return dto;
+        }
+        
+    }
+
 }

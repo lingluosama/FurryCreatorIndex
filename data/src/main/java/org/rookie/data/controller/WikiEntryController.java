@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.rookie.consts.Result;
 import org.rookie.data.service.IWikiEntryService;
 import org.rookie.model.bo.WikiEntryBO;
+import org.rookie.model.dto.DraftSubmitConflictDTO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
 import org.rookie.model.entity.database.WikiEntry;
@@ -61,6 +62,11 @@ public class WikiEntryController {
     @DeleteMapping("/{id}/force")
     Result<Boolean> forceDeleteWikiEntry(@PathVariable Long id) {
            return Result.success(wikiEntryService.forceDeleteWikiEntry(id));
+    }
+    
+    @PostMapping("/{draftId}/draft-submit")
+    Result<DraftSubmitConflictDTO<WikiEntryDetailDTO>> submitDraftAsNewVersion(@PathVariable Long draftId) {
+        return Result.success(wikiEntryService.submitDraftAsNewVersion(draftId));
     }
 
 

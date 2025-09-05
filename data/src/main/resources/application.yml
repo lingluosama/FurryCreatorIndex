@@ -21,7 +21,7 @@ spring:
         spring:
           json:
             trusted:
-              packages: "org.rookie.entity.database"
+              packages: "org.rookie.model.entity"
       acks: 1
       retries: 3
     consumer:

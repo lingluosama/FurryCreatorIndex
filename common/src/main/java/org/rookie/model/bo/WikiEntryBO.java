@@ -18,6 +18,7 @@ public class WikiEntryBO {
     String coverImageUrl;
     String status;
     Long viewCount;
+    Long updateBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

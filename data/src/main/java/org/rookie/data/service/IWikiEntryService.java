@@ -2,6 +2,7 @@ package org.rookie.data.service;
 
 import com.mybatisflex.core.service.IService;
 import org.rookie.model.bo.WikiEntryBO;
+import org.rookie.model.dto.DraftSubmitConflictDTO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.dto.WikiEntryDetailDTO;
 import org.rookie.model.entity.database.WikiEntry;
@@ -28,5 +29,7 @@ public interface IWikiEntryService extends IService<WikiEntry> {
     List<WikiEntryVersion> queryWikiEntryVersion(Long id);
 
     Boolean forceDeleteWikiEntry(Long id);
+    
+    DraftSubmitConflictDTO<WikiEntryDetailDTO> submitDraftAsNewVersion(Long draftId);
     
 }
