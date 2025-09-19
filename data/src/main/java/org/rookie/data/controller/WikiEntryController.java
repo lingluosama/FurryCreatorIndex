@@ -41,12 +41,12 @@ public class WikiEntryController {
 
     @DeleteMapping("/{id}")
     Result<Boolean> deleteWikiEntry(@PathVariable Long id) {
-        return Result.success(wikiEntryService.deleteWikiEntry(id));
+        return Result.success(wikiEntryService.deleteWikiEntry("WikiEntry:"+id.toString(),id));
     }
 
     @PostMapping("/{id}/versions")
     Result<Boolean> submitNewEntryVersion(@RequestBody WikiEntryForm form) {
-        return Result.success(wikiEntryService.submitNewEntryVersion(form));
+        return Result.success(wikiEntryService.submitNewEntryVersion("WkiEntry:"+form.getId().toString(),form));
     }
 
     @GetMapping("/{id}/versions")

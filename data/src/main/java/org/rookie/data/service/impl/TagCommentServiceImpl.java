@@ -85,7 +85,7 @@ public class TagCommentServiceImpl implements TagCommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Void overwriteEntityTags(EntityTagsForm form) {
+    public void overwriteEntityTags(EntityTagsForm form) {
         List<Long> oldTagIds = QueryChain.of(entityTagMapper)
                 .select(EntityTagTableDef.ENTITY_TAG.TAG_ID)
                 .where(EntityTagTableDef.ENTITY_TAG.ENTITY_ID.eq(form.getEntityId()))
@@ -111,9 +111,6 @@ public class TagCommentServiceImpl implements TagCommentService {
             log.error("更新标签事务已经回滚");
             throw new BusinessException(HttpStatus.SC_BAD_REQUEST,"es更新失败");
         }
-
-
-        return null;
     }
 
     @Override

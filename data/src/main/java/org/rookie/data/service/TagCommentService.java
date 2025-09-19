@@ -1,5 +1,7 @@
 package org.rookie.data.service;
 
+import org.rookie.annotation.RedisCache;
+import org.rookie.annotation.UpdateCache;
 import org.rookie.model.bo.CommentBO;
 import org.rookie.model.dto.PageResult;
 import org.rookie.model.entity.database.Comment;
@@ -22,11 +24,13 @@ public interface TagCommentService {
 
     List<Tag> getTagsByEntityId(Long entityId, String entityType);
 
-    Void overwriteEntityTags(EntityTagsForm form);
+    void overwriteEntityTags(EntityTagsForm form);
 
     Comment createComment(CommentForm comment);
-
+    
+    @RedisCache(key="EntityComment:",expire = 1)
     PageResult<CommentBO> getCommentsByEntityId(EntityCommentPageQuery query);
-
+    
+    @UpdateCache()
     Boolean deleteComment(Long commentId);
 }

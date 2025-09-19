@@ -1,6 +1,8 @@
 package org.rookie.data.service;
 
 import com.mybatisflex.core.service.IService;
+import org.rookie.annotation.RedisCache;
+import org.rookie.annotation.UpdateCache;
 import org.rookie.model.bo.WikiEntryBO;
 import org.rookie.model.dto.DraftSubmitConflictDTO;
 import org.rookie.model.dto.PageResult;
@@ -16,16 +18,20 @@ public interface IWikiEntryService extends IService<WikiEntry> {
 
     WikiEntry createWikiEntry(WikiEntryForm form);
 
+    @RedisCache(key = "WikiEntryQuery",expire = 168)
     PageResult<WikiEntryBO> queryWikiEntry(WikiEntryPageQuery query);
 
+    @RedisCache(key = "WikiEntryDetail:%s",expire = 168)
     WikiEntryDetailDTO getWikiEntryById(Long id);
 
-    Boolean deleteWikiEntry(Long id);
+    @UpdateCache()
+    Boolean deleteWikiEntry(String redisKey,Long id);
 
-    Boolean submitNewEntryVersion(WikiEntryForm form);
+    @UpdateCache()
+    Boolean submitNewEntryVersion(String redisKey,WikiEntryForm form);
 
     WikiEntryDetailDTO getWikiEntryWithVersion(Long id,Integer version);
-
+    
     List<WikiEntryVersion> queryWikiEntryVersion(Long id);
 
     Boolean forceDeleteWikiEntry(Long id);

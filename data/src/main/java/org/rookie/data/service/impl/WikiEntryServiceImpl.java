@@ -20,6 +20,7 @@ import org.rookie.data.service.IDraftService;
 import org.rookie.data.service.IWikiEntryService;
 import org.rookie.data.service.TagCommentService;
 import org.rookie.data.utils.EsRespHandler;
+import org.rookie.data.utils.TextDiffer;
 import org.rookie.exception.BusinessException;
 import org.rookie.model.bo.WikiEntryBO;
 import org.rookie.model.dto.DraftSubmitConflictDTO;
@@ -129,7 +130,7 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
     }
 
     @Override
-    public Boolean deleteWikiEntry(Long id) {
+    public Boolean deleteWikiEntry(String redisKey,Long id) {
         WikiEntry entry = new WikiEntry();
         entry.setId(id);
         entry.setIsDeleted(true);
@@ -137,7 +138,7 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
     }
 
     @Override
-    public Boolean submitNewEntryVersion(WikiEntryForm form) {
+    public Boolean submitNewEntryVersion(String redisKey,WikiEntryForm form) {
         WikiEntry entity = converter.toEntity(form);
         WikiEntryVersion versionEntity = converter.toVersionEntity(entity);
         versionEntity.setComment(form.getComment() );
@@ -197,20 +198,19 @@ public class WikiEntryServiceImpl extends ServiceImpl<WikiEntryMapper, WikiEntry
         WikiEntryVersion draftVersion = JSON.parseObject(draft.getData(), WikiEntryVersion.class);
         WikiEntryDetailDTO dbVersion = this.getWikiEntryById(draft.getEntityId());
         
-        //当内容不同且草稿创建时间在当前提价版本之前时，返回冲突的响应
-        if(!draftVersion.getContent().equals(dbVersion.getContent())
-                &&dbVersion.getUpdatedAt().isAfter(draftVersion.getCreatedAt())){
+        //如果最新版本的时间大于草稿时间，且对比结果并非纯新增的情况(即修改了同一处，或丢失了后来的更改)则返回冲突信息
+        int compared = TextDiffer.compareTexts(dbVersion.getContent(), draftVersion.getContent());
+        if(compared>1&&dbVersion.getUpdatedAt().isAfter(draftVersion.getCreatedAt())){
             dto.setCurrentVersion(dbVersion);
             dbVersion.setContent(draftVersion.getContent());
             dbVersion.setUpdatedAt(draftVersion.getCreatedAt());
             dto.setCurrentVersion(dbVersion);
-            return dto;
         }else{
             WikiEntryForm form = converter.versionToForm(draftVersion);
-            this.submitNewEntryVersion(form);
-            return dto;
+            this.submitNewEntryVersion("WikiEntry:"+form.getId(),form);
         }
-        
+        return dto;
+
     }
 
 }
